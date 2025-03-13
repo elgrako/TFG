@@ -16,15 +16,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String CreateDatabase = "Create Table Datos (" +
+        String createTableQuery = "CREATE TABLE Datos (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                "nombre varchar(255) UNIQUE," +
-                "nExpediente varchar(255)," +
-                "euros decimal(10,2)," +
-                "presentado boolean default 0," +
-                "validado boolean default 0," +
-                "nTalon integer)";
-        db.execSQL(CreateDatabase);
+                "nombre TEXT UNIQUE," +
+                "dni TEXT," +
+                "nExpediente TEXT," +
+                "euros DECIMAL(10,2)," +
+                "presentado INTEGER DEFAULT 0," +
+                "validado INTEGER DEFAULT 0," +
+                "nTalon INTEGER)";
+        db.execSQL(createTableQuery);
     }
 
     @Override
@@ -34,10 +35,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
 
-    public boolean insertarDatos(String nombre, String nExpediente, double euros, int nTalon) {
+    public boolean insertarDatosEdit(Datos datos) {
         SQLiteDatabase db = this.getWritableDatabase();
-        String query = "INSERT INTO Datos (nombre, nExpediente, euros, nTalon) VALUES (?,?,?,?)";
-        db.execSQL(query, new Object[]{nombre, nExpediente, euros, nTalon});
+        String query = "INSERT INTO Datos (nombre, dni, nExpediente, euros) VALUES (?,?,?,?)";
+        db.execSQL(query, new Object[]{datos.getNombre(), datos.getDni(), datos.getnExpediente(), datos.getEuros()});
         return true;
     }
 
