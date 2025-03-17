@@ -21,7 +21,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "nombre TEXT UNIQUE," +
                 "dni TEXT," +
                 "nExpediente TEXT," +
-                "euros DECIMAL(10,2)," +
+                "euros REAL," +
                 "presentado INTEGER DEFAULT 0," +
                 "validado INTEGER DEFAULT 0," +
                 "nTalon INTEGER)";
@@ -34,17 +34,23 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-
     public boolean insertarDatosEdit(Datos datos) {
         SQLiteDatabase db = this.getWritableDatabase();
-        String query = "INSERT INTO Datos (nombre, dni, nExpediente, euros) VALUES (?,?,?,?)";
-        db.execSQL(query, new Object[]{datos.getNombre(), datos.getDni(), datos.getnExpediente(), datos.getEuros()});
-        return true;
+        try {
+            String query = "INSERT INTO Datos (nombre, dni, nExpediente, euros) VALUES (?, ?, ?, ?)";
+            db.execSQL(query, new Object[]{datos.getNombre(), datos.getDni(), datos.getnExpediente(), datos.getEuros()
+            });
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        } finally {
+            db.close();
+        }
     }
 
     public Cursor obtenerDatos() {
         SQLiteDatabase db = this.getReadableDatabase();
-        return db.rawQuery("SELECT * FROM Datos", null);
+        return db.rawQuery("SELECT nombre, dni, nExpediente, euros FROM Datos", null);
     }
 }
-
