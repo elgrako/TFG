@@ -56,12 +56,11 @@ public class MainActivity extends AppCompatActivity {
                 @SuppressLint("Range") String nExpediente = cursor.getString(cursor.getColumnIndex("nExpediente"));
                 @SuppressLint("Range") double euros = cursor.getDouble(cursor.getColumnIndex("euros"));
                 listaDatos.add(new Datos(nombre, dni, nExpediente, euros));
-                Log.d("DATABASE", "Cargado: " + nombre + ", " + dni + ", " + nExpediente + ", " + euros);
             } while (cursor.moveToNext());
             cursor.close();
         }
 
-        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, listaDatos);
+        adapter = new DatosAdapter(this, listaDatos);
         listViewDatos.setAdapter(adapter);
     }
 

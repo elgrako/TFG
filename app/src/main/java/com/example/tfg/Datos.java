@@ -47,4 +47,9 @@ public class Datos {
     public void setEuros(double euros) {
         this.euros = euros;
     }
+
+    @Override
+    public String toString() {
+        return "Nombre: " + nombre + " / DNI: " + dni + " / Expediente: " + nExpediente + " / Euros: " + euros;
+    }
 }
