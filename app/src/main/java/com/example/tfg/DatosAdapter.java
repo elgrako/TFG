@@ -28,16 +28,17 @@ public class DatosAdapter extends ArrayAdapter<Datos> {
 
         Datos datos = listaDatos.get(position);
 
-        TextView nombre = convertView.findViewById(R.id.tvNombre);
-        TextView dni = convertView.findViewById(R.id.tvDni);
-        TextView nExpediente = convertView.findViewById(R.id.tvExpediente);
-        TextView euros = convertView.findViewById(R.id.tvEuros);
+        TextView tvNombre = convertView.findViewById(R.id.tvNombre);
+        TextView tvDni = convertView.findViewById(R.id.tvDni);
+        TextView tvExpediente = convertView.findViewById(R.id.tvExpediente);
+        TextView tvEuros = convertView.findViewById(R.id.tvEuros);
 
-        nombre.setText("Nombre: " + datos.getNombre());
-        dni.setText("DNI: " + datos.getDni());
-        nExpediente.setText("Expediente: " + datos.getnExpediente());
-        euros.setText("Euros: €" + datos.getEuros());
+        tvNombre.setText(datos.getNombre());
+        tvDni.setText(datos.getDni());
+        tvExpediente.setText(datos.getnExpediente());
+        tvEuros.setText("€" + datos.getEuros());
 
         return convertView;
     }
+
 }

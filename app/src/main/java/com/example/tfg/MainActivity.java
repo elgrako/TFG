@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
+import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -30,6 +31,10 @@ public class MainActivity extends AppCompatActivity {
         dbh = new DatabaseHelper(this);
         listViewDatos = findViewById(R.id.listaDatos);
         listaDatos = new ArrayList<>();
+
+        LayoutInflater inflater = getLayoutInflater();
+        View headerView = inflater.inflate(R.layout.header_datos, listViewDatos, false);
+        listViewDatos.addHeaderView(headerView);
 
         Button newButton = findViewById(R.id.newButton);
         registerForContextMenu(listViewDatos);
