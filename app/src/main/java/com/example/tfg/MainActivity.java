@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
@@ -29,14 +28,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         dbh = new DatabaseHelper(this);
-        listViewDatos = findViewById(R.id.listaDatos);
+        listViewDatos = findViewById(R.id.listaDatosMain);
         listaDatos = new ArrayList<>();
 
         LayoutInflater inflater = getLayoutInflater();
         View headerView = inflater.inflate(R.layout.header_datos, listViewDatos, false);
         listViewDatos.addHeaderView(headerView);
 
-        Button newButton = findViewById(R.id.newButton);
+        Button newButton = findViewById(R.id.newMainButton);
         registerForContextMenu(listViewDatos);
 
         cargarDatos();
@@ -53,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void cargarDatos() {
+        listaDatos.clear();
         Cursor cursor = dbh.obtenerDatos();
         if (cursor != null && cursor.moveToFirst()) {
             do {
@@ -79,7 +79,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        Datos datosSeleccionado = listaDatos.get(info.position);
+
+        Datos datosSeleccionado = listaDatos.get(info.position -1);
 
         if (item.getItemId() == R.id.edit_context) {
             Intent intent = new Intent(MainActivity.this, EditActivity.class);

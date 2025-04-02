@@ -24,8 +24,8 @@ public class EditActivity extends AppCompatActivity {
         dniField = findViewById(R.id.dniEditField);
         nExpedienteField = findViewById(R.id.nExpedienteEditField);
         eurosField = findViewById(R.id.eurosEditField);
-        okButton = findViewById(R.id.nextButton);
-        cancelButton = findViewById(R.id.backButton);
+        okButton = findViewById(R.id.nextEditButton);
+        cancelButton = findViewById(R.id.backEditButton);
 
         nombre = getIntent().getStringExtra("nombre");
 

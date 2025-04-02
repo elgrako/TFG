@@ -8,7 +8,7 @@
     tools:context=".EditActivity">
 
     <Button
-        android:id="@+id/nextButton"
+        android:id="@+id/nextEditButton"
         android:layout_width="118dp"
         android:layout_height="53dp"
         android:layout_marginEnd="52dp"
@@ -19,13 +19,13 @@
         app:layout_constraintVertical_bias="0.886" />
 
     <Button
-        android:id="@+id/backButton"
+        android:id="@+id/backEditButton"
         android:layout_width="120dp"
         android:layout_height="52dp"
         android:layout_marginStart="52dp"
         android:text="Volver"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/nextButton"
+        app:layout_constraintEnd_toStartOf="@+id/nextEditButton"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"

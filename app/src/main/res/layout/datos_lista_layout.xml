@@ -7,7 +7,7 @@
     android:background="@android:color/white">
 
     <TextView
-        android:id="@+id/tvNombre"
+        android:id="@+id/nameDatosLista"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="2"
@@ -16,7 +16,7 @@
         android:textColor="@android:color/black" />
 
     <TextView
-        android:id="@+id/tvDni"
+        android:id="@+id/dniDatosLista"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="2"
@@ -25,7 +25,7 @@
         android:textColor="@android:color/black" />
 
     <TextView
-        android:id="@+id/tvExpediente"
+        android:id="@+id/nExpedienteDatosLista"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="2"
@@ -34,7 +34,7 @@
         android:textColor="@android:color/black" />
 
     <TextView
-        android:id="@+id/tvEuros"
+        android:id="@+id/eurosDatosLista"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
