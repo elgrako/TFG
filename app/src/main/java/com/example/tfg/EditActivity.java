@@ -35,13 +35,19 @@ public class EditActivity extends AppCompatActivity {
 
             dniField.setText(getIntent().getStringExtra("dni"));
             nExpedienteField.setText(getIntent().getStringExtra("nExpediente"));
-            eurosField.setText(getIntent().getStringExtra("euros"));
+            if (getIntent().hasExtra("euros")) {
+                double euros = getIntent().getDoubleExtra("euros", 0.0);
+                eurosField.setText(String.valueOf(euros));
+            }
         }
 
         okButton.setOnClickListener(v -> {
             guardarDatos();
+            double euros = Double.parseDouble(eurosField.getText().toString().trim());
+
             Intent okIntent = new Intent(this, Situacion1Activity.class);
             okIntent.putExtra("nombre", nombre);
+            okIntent.putExtra("euros", euros);
             startActivity(okIntent);
             finish();
         });
