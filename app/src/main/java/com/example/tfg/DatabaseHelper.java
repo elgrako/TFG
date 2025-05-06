@@ -11,7 +11,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "tfgDatabase.db";
 
     public DatabaseHelper(@Nullable Context context) {
-        super(context, DATABASE_NAME, null, 2);
+        super(context, DATABASE_NAME, null, 3);
     }
 
     @Override
@@ -24,7 +24,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "euros REAL," +
                 "presentado INTEGER DEFAULT 0," +
                 "validado INTEGER DEFAULT 0," +
-                "nTalon INTEGER)";
+                "pagado INTEGER DEFAULT 0," +
+                "nTalon INTEGER," +
+                "comentarios TEXT)";
         db.execSQL(createTableQuery);
     }
 
@@ -52,5 +54,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public Cursor obtenerDatos() {
         SQLiteDatabase db = this.getReadableDatabase();
         return db.rawQuery("SELECT nombre, dni, nExpediente, euros FROM Datos", null);
+    }
+    public Cursor obtenerSituacion1(String nombre) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        return db.rawQuery("SELECT presentado, validado, pagado, nTalon, comentarios FROM Datos WHERE nombre = ?", new String[]{nombre});
+    }
+
+
+    public boolean updateSituacion1(String nombre, int presentado, int validado, int pagado, int nTalon, String comentarios) {
+        SQLiteDatabase db = this.getWritableDatabase();
+            String query = "UPDATE Datos SET presentado = ?, validado = ?, pagado = ?, nTalon = ?, comentarios = ? WHERE nombre = ?";
+            db.execSQL(query, new Object[]{presentado, validado, pagado, nTalon, comentarios, nombre});
+            return true;
     }
 }
