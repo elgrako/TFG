@@ -106,11 +106,7 @@ public class Situacion1Activity extends AppCompatActivity {
             String nTalonTexto = NTalon1Sit.getText().toString();
             int nTalon = 0;
             if (!nTalonTexto.isEmpty()) {
-                try {
-                    nTalon = Integer.parseInt(nTalonTexto);
-                } catch (NumberFormatException e) {
-                    nTalon = 0;
-                }
+                nTalon = Integer.parseInt(nTalonTexto);
             }
 
             String comentarios = Coments1Sit.getText().toString();
@@ -121,7 +117,7 @@ public class Situacion1Activity extends AppCompatActivity {
                 startActivity(new Intent(this, MainActivity.class));
                 finish();
             } else {
-                Toast.makeText(this, "Error al actualizar/guardar", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Error al actualizar o guardar", Toast.LENGTH_SHORT).show();
             }
         });
     }
