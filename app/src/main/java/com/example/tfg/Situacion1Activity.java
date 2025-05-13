@@ -25,6 +25,7 @@ public class Situacion1Activity extends AppCompatActivity {
         setContentView(R.layout.activity_situacion1);
 
         Button finishButton = findViewById(R.id.next1SitButton);
+        Button cancelButton = findViewById(R.id.cancel1SitButton);
         EditText Coments1Sit = findViewById(R.id.Coments1Sit);
         EditText NTalon1Sit = findViewById(R.id.NTalon1Sit);
         Switch Pendiente1Sit = findViewById(R.id.switchPendiente1Sit);
@@ -50,9 +51,10 @@ public class Situacion1Activity extends AppCompatActivity {
             int nTalon = cursor.getInt(3);
             String comentarios = cursor.getString(4);
 
-            Pendiente1Sit.setChecked(presentado == 1);
-            Validado1Sit.setChecked(validado == 1);
-            Pagado1Sit.setChecked(pagado == 1);
+            actualizarEstadoSwitch(Pendiente1Sit, presentado == 1, "Aprobado", "Pendiente");
+            actualizarEstadoSwitch(Validado1Sit, validado == 1, "Validado", "Por Validar");
+            actualizarEstadoSwitch(Pagado1Sit, pagado == 1, "Pagado", "Por Pagar");
+
             NTalon1Sit.setText(String.valueOf(nTalon));
             Coments1Sit.setText(comentarios);
 
@@ -60,53 +62,35 @@ public class Situacion1Activity extends AppCompatActivity {
         }
 
         Pendiente1Sit.setOnCheckedChangeListener((b, isChecked) -> {
-            if (isChecked) {
-                Pendiente1Sit.setText("Aprobado");
-                Pendiente1Sit.setTextColor(Color.GREEN);
-            } else {
-                Pendiente1Sit.setText("Pendiente");
-                Pendiente1Sit.setTextColor(Color.RED);
-            }
+            actualizarEstadoSwitch(Pendiente1Sit, isChecked, "Aprobado", "Pendiente");
         });
 
         Validado1Sit.setOnCheckedChangeListener((b, isChecked) -> {
-            if (isChecked) {
-                Validado1Sit.setText("Validado");
-                Validado1Sit.setTextColor(Color.GREEN);
-            } else {
-                Validado1Sit.setText("Por Validar");
-                Validado1Sit.setTextColor(Color.RED);
-            }
+            actualizarEstadoSwitch(Validado1Sit, isChecked, "Validado", "Por Validar");
         });
 
         Pagado1Sit.setOnCheckedChangeListener((b, isChecked) -> {
-            if (isChecked) {
-                Pagado1Sit.setText("Pagado");
-                Pagado1Sit.setTextColor(Color.GREEN);
-            } else {
-                Pagado1Sit.setText("Por Pagar");
-                Pagado1Sit.setTextColor(Color.RED);
-            }
+            actualizarEstadoSwitch(Pagado1Sit, isChecked, "Pagado", "Por Pagar");
         });
+
 
         finishButton.setOnClickListener(v -> {
             int presentado = 0;
-            if (Pendiente1Sit.isChecked()) {
-                presentado = 1;
-            }
+            if (Pendiente1Sit.isChecked()) presentado = 1;
+
             int validado = 0;
-            if (Validado1Sit.isChecked()) {
-                validado = 1;
-            }
+            if (Validado1Sit.isChecked()) validado = 1;
+
             int pagado = 0;
-            if (Pagado1Sit.isChecked()) {
-                pagado = 1;
-            }
+            if (Pagado1Sit.isChecked()) pagado = 1;
 
             String nTalonTexto = NTalon1Sit.getText().toString();
             int nTalon = 0;
             if (!nTalonTexto.isEmpty()) {
-                nTalon = Integer.parseInt(nTalonTexto);
+                try {
+                    nTalon = Integer.parseInt(nTalonTexto);
+                } catch (NumberFormatException ignored) {
+                }
             }
 
             String comentarios = Coments1Sit.getText().toString();
@@ -120,5 +104,22 @@ public class Situacion1Activity extends AppCompatActivity {
                 Toast.makeText(this, "Error al actualizar o guardar", Toast.LENGTH_SHORT).show();
             }
         });
+
+        cancelButton.setOnClickListener(v -> {
+            Intent cancelIntent = new Intent(this, MainActivity.class);
+            startActivity(cancelIntent);
+            finish();
+        });
+    }
+
+    private void actualizarEstadoSwitch(Switch s, boolean check, String TextYes, String TextNo) {
+        s.setChecked(check);
+        if (check) {
+            s.setText(TextYes);
+            s.setTextColor(Color.GREEN);
+        } else {
+            s.setText(TextNo);
+            s.setTextColor(Color.RED);
+        }
     }
 }

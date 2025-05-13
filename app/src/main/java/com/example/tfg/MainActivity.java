@@ -13,7 +13,9 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+
 import androidx.appcompat.app.AppCompatActivity;
+
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
@@ -45,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         });
     }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -53,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void cargarDatos() {
         listaDatos.clear();
-        Cursor cursor = dbh.obtenerDatos();
+        Cursor cursor = dbh.obtenerDatosMain();
         if (cursor != null && cursor.moveToFirst()) {
             do {
                 @SuppressLint("Range") String nombre = cursor.getString(cursor.getColumnIndex("nombre"));
@@ -79,18 +82,28 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-
-        Datos datosSeleccionado = listaDatos.get(info.position -1);
+        Datos datosSeleccionado = listaDatos.get(info.position - 1);
 
         if (item.getItemId() == R.id.edit_context) {
-            Intent intent = new Intent(MainActivity.this, EditActivity.class);
-            intent.putExtra("nombre", datosSeleccionado.getNombre());
-            intent.putExtra("dni", datosSeleccionado.getDni());
-            intent.putExtra("nExpediente", datosSeleccionado.getnExpediente());
-            intent.putExtra("euros", datosSeleccionado.getEuros());
-            startActivity(intent);
+            Cursor cursor = dbh.getExtrasByNombre(datosSeleccionado.getNombre());
+
+            if (cursor != null && cursor.moveToFirst()) {
+                @SuppressLint("Range") String email = cursor.getString(cursor.getColumnIndex("email"));
+                @SuppressLint("Range") int telefono = cursor.getInt(cursor.getColumnIndex("telefono"));
+                cursor.close();
+
+                Intent intent = new Intent(MainActivity.this, EditActivity.class);
+                intent.putExtra("nombre", datosSeleccionado.getNombre());
+                intent.putExtra("dni", datosSeleccionado.getDni());
+                intent.putExtra("nExpediente", datosSeleccionado.getnExpediente());
+                intent.putExtra("euros", datosSeleccionado.getEuros());
+                intent.putExtra("email", email);
+                intent.putExtra("telefono", telefono);
+                startActivity(intent);
+            }
             return true;
         }
         return super.onContextItemSelected(item);
     }
+
 }

@@ -80,4 +80,26 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/nameEditField" />
 
+    <EditText
+        android:id="@+id/telefonoEditField"
+        android:layout_width="215dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="24dp"
+        android:hint="Teléfono"
+        android:inputType="phone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/eurosEditField" />
+
+    <EditText
+        android:id="@+id/emailEditField"
+        android:layout_width="215dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="24dp"
+        android:hint="Correo electrónico"
+        android:inputType="textEmailAddress"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/telefonoEditField" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -9,7 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class EditActivity extends AppCompatActivity {
     DatabaseHelper dbh;
-    EditText nameField, dniField, nExpedienteField, eurosField;
+    EditText nameField, dniField, nExpedienteField, eurosField, emailField, telefonoField;
     Button okButton, cancelButton;
     String nombre;
 
@@ -24,6 +24,9 @@ public class EditActivity extends AppCompatActivity {
         dniField = findViewById(R.id.dniEditField);
         nExpedienteField = findViewById(R.id.nExpedienteEditField);
         eurosField = findViewById(R.id.eurosEditField);
+        emailField = findViewById(R.id.emailEditField);
+        telefonoField = findViewById(R.id.telefonoEditField);
+
         okButton = findViewById(R.id.nextEditButton);
         cancelButton = findViewById(R.id.backEditButton);
 
@@ -31,13 +34,18 @@ public class EditActivity extends AppCompatActivity {
 
         if (nombre != null) {
             nameField.setText(nombre);
-            nameField.setEnabled(false);
 
             dniField.setText(getIntent().getStringExtra("dni"));
             nExpedienteField.setText(getIntent().getStringExtra("nExpediente"));
+            emailField.setText(getIntent().getStringExtra("email"));
+
             if (getIntent().hasExtra("euros")) {
                 double euros = getIntent().getDoubleExtra("euros", 0.0);
                 eurosField.setText(String.valueOf(euros));
+            }
+            if (getIntent().hasExtra("telefono")) {
+                int telefono = getIntent().getIntExtra("telefono", 0);
+                telefonoField.setText(String.valueOf(telefono));
             }
         }
 
@@ -62,13 +70,15 @@ public class EditActivity extends AppCompatActivity {
         String dni = dniField.getText().toString().trim();
         String nExpediente = nExpedienteField.getText().toString().trim();
         double euros = Double.parseDouble(eurosField.getText().toString().trim());
+        String email = emailField.getText().toString().trim();
+        int telefono = Integer.parseInt(telefonoField.getText().toString().trim());
 
         if (nombre == null) {
             nombre = nameField.getText().toString().trim();
         }
 
-        Datos datos = new Datos(nombre, dni, nExpediente, euros);
-        dbh.insertarDatosEdit(datos);
+        Datos datos = new Datos(nombre, dni, nExpediente, euros, email, telefono);
+        dbh.insertarOActualizarDatosEdit(datos);
         Toast.makeText(this, "Datos guardados", Toast.LENGTH_SHORT).show();
     }
 }

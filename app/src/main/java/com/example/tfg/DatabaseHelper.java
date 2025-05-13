@@ -11,7 +11,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "tfgDatabase.db";
 
     public DatabaseHelper(@Nullable Context context) {
-        super(context, DATABASE_NAME, null, 3);
+        super(context, DATABASE_NAME, null, 4);
     }
 
     @Override
@@ -22,6 +22,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "dni TEXT," +
                 "nExpediente TEXT," +
                 "euros REAL," +
+                "email TEXT," +
+                "telefono INTEGER," +
                 "presentado INTEGER DEFAULT 0," +
                 "validado INTEGER DEFAULT 0," +
                 "pagado INTEGER DEFAULT 0," +
@@ -36,35 +38,56 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public boolean insertarDatosEdit(Datos datos) {
+    public boolean insertarOActualizarDatosEdit(Datos datos) {
         SQLiteDatabase db = this.getWritableDatabase();
-        try {
-            String query = "INSERT INTO Datos (nombre, dni, nExpediente, euros) VALUES (?, ?, ?, ?)";
-            db.execSQL(query, new Object[]{datos.getNombre(), datos.getDni(), datos.getnExpediente(), datos.getEuros()
+        Cursor cursor = db.rawQuery("SELECT nombre FROM Datos WHERE nombre = ?", new String[]{datos.getNombre()});
+        boolean existe = (cursor != null && cursor.moveToFirst());
+        cursor.close();
+
+        if (existe) {
+            String query = "UPDATE Datos SET dni = ?, nExpediente = ?, euros = ?, email = ?, telefono = ? WHERE nombre = ?";
+            db.execSQL(query, new Object[]{
+                    datos.getDni(),
+                    datos.getnExpediente(),
+                    datos.getEuros(),
+                    datos.getEmail(),
+                    datos.getTelefono(),
+                    datos.getNombre()
             });
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        } finally {
-            db.close();
+        } else {
+            String query = "INSERT INTO Datos (nombre, dni, nExpediente, euros, email, telefono) VALUES (?, ?, ?, ?, ?, ?)";
+            db.execSQL(query, new Object[]{
+                    datos.getNombre(),
+                    datos.getDni(),
+                    datos.getnExpediente(),
+                    datos.getEuros(),
+                    datos.getEmail(),
+                    datos.getTelefono()
+            });
         }
+        return true;
     }
 
-    public Cursor obtenerDatos() {
+
+    public Cursor obtenerDatosMain() {
         SQLiteDatabase db = this.getReadableDatabase();
         return db.rawQuery("SELECT nombre, dni, nExpediente, euros FROM Datos", null);
     }
+
     public Cursor obtenerSituacion1(String nombre) {
         SQLiteDatabase db = this.getReadableDatabase();
         return db.rawQuery("SELECT presentado, validado, pagado, nTalon, comentarios FROM Datos WHERE nombre = ?", new String[]{nombre});
     }
 
+    public Cursor getExtrasByNombre(String nombre) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        return db.rawQuery("SELECT email, telefono FROM Datos WHERE nombre = ?", new String[]{nombre});
+    }
 
     public boolean updateSituacion1(String nombre, int presentado, int validado, int pagado, int nTalon, String comentarios) {
         SQLiteDatabase db = this.getWritableDatabase();
-            String query = "UPDATE Datos SET presentado = ?, validado = ?, pagado = ?, nTalon = ?, comentarios = ? WHERE nombre = ?";
-            db.execSQL(query, new Object[]{presentado, validado, pagado, nTalon, comentarios, nombre});
-            return true;
+        String query = "UPDATE Datos SET presentado = ?, validado = ?, pagado = ?, nTalon = ?, comentarios = ? WHERE nombre = ?";
+        db.execSQL(query, new Object[]{presentado, validado, pagado, nTalon, comentarios, nombre});
+        return true;
     }
 }
