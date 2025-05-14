@@ -3,6 +3,7 @@ package com.example.tfg;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -13,6 +14,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -79,31 +81,61 @@ public class MainActivity extends AppCompatActivity {
         inflater.inflate(R.menu.main_context, menu);
     }
 
+
+    @SuppressLint("Range")
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         Datos datosSeleccionado = listaDatos.get(info.position - 1);
 
-        if (item.getItemId() == R.id.edit_context) {
-            Cursor cursor = dbh.getExtrasByNombre(datosSeleccionado.getNombre());
+        Cursor cursor = dbh.getExtrasByNombre(datosSeleccionado.getNombre());
 
-            if (cursor != null && cursor.moveToFirst()) {
-                @SuppressLint("Range") String email = cursor.getString(cursor.getColumnIndex("email"));
-                @SuppressLint("Range") int telefono = cursor.getInt(cursor.getColumnIndex("telefono"));
-                cursor.close();
+        String email = "";
+        int telefono = 0;
 
-                Intent intent = new Intent(MainActivity.this, EditActivity.class);
-                intent.putExtra("nombre", datosSeleccionado.getNombre());
-                intent.putExtra("dni", datosSeleccionado.getDni());
-                intent.putExtra("nExpediente", datosSeleccionado.getnExpediente());
-                intent.putExtra("euros", datosSeleccionado.getEuros());
-                intent.putExtra("email", email);
-                intent.putExtra("telefono", telefono);
-                startActivity(intent);
+        if (cursor != null && cursor.moveToFirst()) {
+            email = cursor.getString(cursor.getColumnIndex("email"));
+            telefono = cursor.getInt(cursor.getColumnIndex("telefono"));
+            cursor.close();
+        }
+
+        int id = item.getItemId();
+
+        if (id == R.id.edit_context) {
+            Intent intent = new Intent(MainActivity.this, EditActivity.class);
+            intent.putExtra("nombre", datosSeleccionado.getNombre());
+            intent.putExtra("dni", datosSeleccionado.getDni());
+            intent.putExtra("nExpediente", datosSeleccionado.getnExpediente());
+            intent.putExtra("euros", datosSeleccionado.getEuros());
+            intent.putExtra("email", email);
+            intent.putExtra("telefono", telefono);
+            startActivity(intent);
+            return true;
+
+        } else if (id == R.id.correo_context) {
+            if (email != null && !email.isEmpty()) {
+                Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
+                emailIntent.setData(Uri.parse("mailto:" + email));
+                emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Consulta sobre el expediente");
+                startActivity(Intent.createChooser(emailIntent, "Enviar email"));
+            } else {
+                Toast.makeText(this, "No hay un correo electronico asignado", Toast.LENGTH_SHORT).show();
+            }
+            return true;
+
+        } else if (id == R.id.telefono_context) {
+            if (telefono != 0) {
+                Intent callIntent = new Intent(Intent.ACTION_DIAL);
+                callIntent.setData(Uri.parse("tel:" + telefono));
+                startActivity(callIntent);
+            } else {
+                Toast.makeText(this, "No hay un numero de teléfono asignado", Toast.LENGTH_SHORT).show();
             }
             return true;
         }
+
         return super.onContextItemSelected(item);
     }
+
 
 }

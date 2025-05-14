@@ -5,4 +5,10 @@
     <item
         android:id="@+id/edit_context"
         android:title="Editar" />
+    <item
+        android:id="@+id/correo_context"
+        android:title="Correo" />
+    <item
+        android:id="@+id/telefono_context"
+        android:title="Telefono" />
 </menu>
