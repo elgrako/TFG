@@ -16,7 +16,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String createTableQuery = "CREATE TABLE Datos (" +
+        String createTableDatos = "CREATE TABLE Datos (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT," +
                 "nombre TEXT UNIQUE," +
                 "dni TEXT," +
@@ -29,7 +29,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "pagado INTEGER DEFAULT 0," +
                 "nTalon INTEGER," +
                 "comentarios TEXT)";
-        db.execSQL(createTableQuery);
+        db.execSQL(createTableDatos);
+
+        String createTableUsuarios = "CREATE TABLE Usuarios (" +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "usuario TEXT UNIQUE," +
+                "contrasena TEXT)";
+        db.execSQL(createTableUsuarios);
     }
 
     @Override
@@ -90,4 +96,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(query, new Object[]{presentado, validado, pagado, nTalon, comentarios, nombre});
         return true;
     }
+
+    public boolean insertarUsuario(String user, String passw) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "INSERT INTO Usuarios (usuario, contrasena) VALUES (?, ?)";
+        db.execSQL(query, new Object[]{user, passw});
+        return true;
+    }
+
+    public boolean checkLogin(String user, String passw) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM Usuarios WHERE usuario = ? AND contrasena = ?", new String[]{user, passw});
+        boolean exists = cursor.moveToFirst();
+        cursor.close();
+        return exists;
+    }
+
 }
