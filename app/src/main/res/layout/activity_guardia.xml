@@ -1,8 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".GuardiaActivity"/>
+    android:padding="24dp"
+    android:background="#FAFAFA"
+    tools:context=".GuardiaActivity">
+
+    <EditText
+        android:id="@+id/diaActuacionField"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:hint="Día de actuación"
+        android:background="@android:drawable/editbox_background"
+        android:inputType="text"
+        android:padding="10dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <EditText
+        android:id="@+id/nombreAsistidoField"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="24dp"
+        android:hint="Nombre del asistido"
+        android:background="@android:drawable/editbox_background"
+        android:inputType="textPersonName"
+        android:padding="10dp"
+        app:layout_constraintTop_toBottomOf="@id/diaActuacionField"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <Switch
+        android:id="@+id/switchPasaPorJuzgado"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:text="¿Pasa por Juzgado?"
+        android:textColor="#D7585858"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:paddingStart="8dp"
+        app:layout_constraintTop_toBottomOf="@id/nombreAsistidoField"
+        android:layout_marginTop="24dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:ignore="UseSwitchCompatOrMaterialXml" />
+
+    <Switch
+        android:id="@+id/switchHaCobrado"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:text="¿Ha cobrado?"
+        android:textColor="#D7585858"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:paddingStart="8dp"
+        app:layout_constraintTop_toBottomOf="@id/switchPasaPorJuzgado"
+        android:layout_marginTop="24dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:ignore="UseSwitchCompatOrMaterialXml" />
+
+    <Button
+        android:id="@+id/guardarGuardiaButton"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:text="Guardar Guardia"
+        android:layout_marginTop="32dp"
+        android:backgroundTint="#2ECC71"
+        android:textColor="#FFFFFF"
+        app:layout_constraintTop_toBottomOf="@id/switchHaCobrado"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

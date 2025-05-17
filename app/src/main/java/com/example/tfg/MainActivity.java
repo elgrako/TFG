@@ -3,6 +3,7 @@ package com.example.tfg;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.ContextMenu;
@@ -15,6 +16,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -35,6 +37,20 @@ public class MainActivity extends AppCompatActivity {
         dbh = new DatabaseHelper(this);
         listViewDatos = findViewById(R.id.listaDatosMain);
         listaDatos = new ArrayList<>();
+
+        TextView verGuardias = findViewById(R.id.verGuardias);
+        TextView verJudiciales = findViewById(R.id.verJudiciales);
+
+        verGuardias.setOnClickListener(v -> {
+            verGuardias.setTextColor(Color.DKGRAY);
+            verJudiciales.setTextColor(Color.BLUE);
+            startActivity(new Intent(MainActivity.this, MainGuardiaActivity.class));
+        });
+
+        verJudiciales.setOnClickListener(v -> {
+            verGuardias.setTextColor(Color.BLUE);
+            verJudiciales.setTextColor(Color.DKGRAY);
+        });
 
         LayoutInflater inflater = getLayoutInflater();
         View headerView = inflater.inflate(R.layout.header_datos, listViewDatos, false);

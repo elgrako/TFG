@@ -11,7 +11,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "tfgDatabase.db";
 
     public DatabaseHelper(@Nullable Context context) {
-        super(context, DATABASE_NAME, null, 4);
+        super(context, DATABASE_NAME, null, 5);
     }
 
     @Override
@@ -36,6 +36,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "usuario TEXT UNIQUE," +
                 "contrasena TEXT)";
         db.execSQL(createTableUsuarios);
+
+        String createGuardiaTable = "CREATE TABLE Guardia (" +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "nombreAsistido TEXT," +
+                "diaActuacion TEXT," +
+                "porJuzgado INTEGER DEFAULT 0," +
+                "cobrado INTEGER DEFAULT 0)";
+        db.execSQL(createGuardiaTable);
     }
 
     @Override
@@ -111,5 +119,29 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cursor.close();
         return exists;
     }
+
+    public boolean insertarGuardia(String nombreAsistido, String diaActuacion, boolean porJuzgado, boolean cobrado) {
+        int porJuzgadoInt = 0;
+        if (porJuzgado) porJuzgadoInt = 1;
+
+        int cobradoInt = 0;
+        if (cobrado) cobradoInt = 1;
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "INSERT INTO Guardia (nombreAsistido, diaActuacion, porJuzgado, cobrado) VALUES (?, ?, ?, ?)";
+        db.execSQL(query, new Object[]{
+                nombreAsistido,
+                diaActuacion,
+                porJuzgadoInt,
+                cobradoInt
+        });
+        return true;
+    }
+
+    public Cursor obtenerGuardias() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        return db.rawQuery("SELECT * FROM Guardia", null);
+    }
+
 
 }
