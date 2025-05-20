@@ -44,6 +44,26 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "porJuzgado INTEGER DEFAULT 0," +
                 "cobrado INTEGER DEFAULT 0)";
         db.execSQL(createGuardiaTable);
+
+        String createSituacionGuardia = "CREATE TABLE IF NOT EXISTS SituacionGuardia (" +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "nombreAsistido TEXT UNIQUE," +
+                "comentarios TEXT," +
+                "nTalon TEXT," +
+                "euros TEXT," +
+                "presentado INTEGER DEFAULT 0," +
+                "validado INTEGER DEFAULT 0," +
+                "pagado INTEGER DEFAULT 0)";
+        db.execSQL(createSituacionGuardia);
+
+        String createApelacionGuardiaTable = "CREATE TABLE ApelacionGuardia (" +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "nExpediente TEXT," +
+                "admitido INTEGER," +
+                "presentado INTEGER," +
+                "sentencia INTEGER)";
+        db.execSQL(createApelacionGuardiaTable);
+
     }
 
     @Override
@@ -137,10 +157,54 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         });
         return true;
     }
-
     public Cursor obtenerGuardias() {
         SQLiteDatabase db = this.getReadableDatabase();
         return db.rawQuery("SELECT * FROM Guardia", null);
+    }
+
+    public boolean insertarSituacionGuardia(String nombre, String comentarios, String nTalon, String euros, int presentado, int validado, int pagado) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM SituacionGuardia WHERE nombreAsistido = ?", new String[]{nombre});
+        boolean exists = cursor.moveToFirst();
+        cursor.close();
+
+        if (exists) {
+            String query = "UPDATE SituacionGuardia SET comentarios = ?, nTalon = ?, euros = ?, presentado = ?, validado = ?, pagado = ? WHERE nombreAsistido = ?";
+            db.execSQL(query, new Object[]{comentarios, nTalon, euros, presentado, validado, pagado, nombre});
+        } else {
+            String query = "INSERT INTO SituacionGuardia (nombreAsistido, comentarios, nTalon, euros, presentado, validado, pagado) VALUES (?, ?, ?, ?, ?, ?, ?)";
+            db.execSQL(query, new Object[]{nombre, comentarios, nTalon, euros, presentado, validado, pagado});
+        }
+        return true;
+    }
+
+    public Cursor obtenerSituacionGuardia(String nombre) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        return db.rawQuery("SELECT comentarios, nTalon, euros, presentado, validado, pagado FROM SituacionGuardia WHERE nombreAsistido = ?", new String[]{nombre});
+    }
+
+
+    public boolean insertarApelacionGuardia(String nExpediente, boolean admitido, boolean presentado, boolean sentencia) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        int a = admitido ? 1 : 0;
+        int p = presentado ? 1 : 0;
+        int s = sentencia ? 1 : 0;
+
+        try {
+            String query = "INSERT INTO ApelacionGuardia (nExpediente, admitido, presentado, sentencia) VALUES (?, ?, ?, ?)";
+            db.execSQL(query, new Object[]{nExpediente, a, p, s});
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        } finally {
+            db.close();
+        }
+    }
+
+    public Cursor obtenerApelacionesGuardia() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        return db.rawQuery("SELECT * FROM ApelacionGuardia", null);
     }
 
 

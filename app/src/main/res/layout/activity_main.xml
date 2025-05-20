@@ -11,23 +11,24 @@
         android:id="@+id/verJudiciales"
         android:layout_width="114dp"
         android:layout_height="34dp"
-        android:layout_marginStart="146dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginStart="144dp"
+        android:layout_marginTop="60dp"
         android:text="Judiciales"
         app:layout_constraintStart_toEndOf="@+id/verGuardias"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ListView
         android:id="@+id/listaDatosMain"
-        android:layout_width="389dp"
-        android:layout_height="567dp"
+        android:layout_width="381dp"
+        android:layout_height="527dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.353" />
+        app:layout_constraintVertical_bias="0.583" />
 
     <Button
         android:id="@+id/newMainButton"
@@ -39,7 +40,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/listaDatosMain"
-        app:layout_constraintVertical_bias="0.555" />
+        app:layout_constraintVertical_bias="1.0" />
 
     <TextView
         android:id="@+id/verGuardias"
@@ -53,5 +54,6 @@
         app:layout_constraintBottom_toTopOf="@+id/listaDatosMain"
         app:layout_constraintEnd_toStartOf="@+id/verJudiciales"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.721" />
 </androidx.constraintlayout.widget.ConstraintLayout>

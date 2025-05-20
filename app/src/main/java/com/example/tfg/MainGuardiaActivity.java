@@ -71,7 +71,7 @@ public class MainGuardiaActivity extends AppCompatActivity {
             do {
                 @SuppressLint("Range") String nombre = cursor.getString(cursor.getColumnIndex("nombreAsistido"));
                 @SuppressLint("Range") String dia = cursor.getString(cursor.getColumnIndex("diaActuacion"));
-                @SuppressLint("Range") int juzgado = cursor.getInt(cursor.getColumnIndex("PorJuzgado"));
+                @SuppressLint("Range") int juzgado = cursor.getInt(cursor.getColumnIndex("porJuzgado"));
                 @SuppressLint("Range") int cobrado = cursor.getInt(cursor.getColumnIndex("cobrado"));
 
                 listaGuardias.add(new Guardia(nombre, dia, juzgado == 1, cobrado == 1));
