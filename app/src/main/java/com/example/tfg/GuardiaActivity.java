@@ -1,19 +1,32 @@
 package com.example.tfg;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.DatePickerDialog;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+
 public class GuardiaActivity extends AppCompatActivity {
 
-    EditText diaField, nombreAsistidoField;
+    TextView diaField;
+    EditText nombreAsistidoField;
     Switch porJuzgadoSwitch, cobradoSwitch;
     Button guardarButton;
     DatabaseHelper dbh;
+
+    private Date selectedDate;
+    private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +41,23 @@ public class GuardiaActivity extends AppCompatActivity {
         cobradoSwitch = findViewById(R.id.switchcobrado);
         guardarButton = findViewById(R.id.guardarGuardiaButton);
 
+        selectedDate = new Date();
+        diaField.setText(sdf.format(selectedDate));
+
+        diaField.setOnClickListener(v -> {
+            final Calendar calendar = Calendar.getInstance();
+            calendar.setTime(selectedDate);
+
+            new DatePickerDialog(this,
+                    (view, year, month, dayOfMonth) -> {
+                        calendar.set(year, month, dayOfMonth);
+                        selectedDate = calendar.getTime();
+                        diaField.setText(sdf.format(selectedDate));
+                    },
+                    calendar.get(Calendar.YEAR),
+                    calendar.get(Calendar.MONTH),
+                    calendar.get(Calendar.DAY_OF_MONTH)).show();
+        });
 
         actualizarEstadoSwitch(porJuzgadoSwitch, false, "Sí por pasa Juzgado", "No por por Juzgado");
         actualizarEstadoSwitch(cobradoSwitch, false, "Cobrado", "No cobrado");
@@ -39,21 +69,27 @@ public class GuardiaActivity extends AppCompatActivity {
                 actualizarEstadoSwitch(cobradoSwitch, isChecked, "Cobrado", "No cobrado"));
 
         guardarButton.setOnClickListener(v -> {
-            String dia = diaField.getText().toString().trim();
             String nombre = nombreAsistidoField.getText().toString().trim();
             boolean juzgado = porJuzgadoSwitch.isChecked();
             boolean cobrado = cobradoSwitch.isChecked();
 
-            if (!dia.isEmpty() && !nombre.isEmpty()) {
-                boolean insertado = dbh.insertarGuardia(nombre, dia, juzgado, cobrado);
-                if (insertado) {
-                    Toast.makeText(this, "Guardia guardada", Toast.LENGTH_SHORT).show();
-                    finish();
-                } else {
-                    Toast.makeText(this, "Error al guardar", Toast.LENGTH_SHORT).show();
-                }
+            if (nombre.isEmpty()) {
+                Toast.makeText(this, "Introduce el nombre del asistido", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            String diaActuacion = sdf.format(selectedDate);
+            boolean insertado = dbh.insertarGuardia(nombre, diaActuacion, juzgado, cobrado);
+            if (insertado) {
+                Toast.makeText(this, "Guardia guardada", Toast.LENGTH_SHORT).show();
+
+
+                Intent intent = new Intent(this, SituacionGuardiaActivity.class);
+                intent.putExtra("nombreAsistido", nombre);
+                startActivity(intent);
+                finish();
             } else {
-                Toast.makeText(this, "Rellena todos los campos", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Error al guardar", Toast.LENGTH_SHORT).show();
             }
         });
     }

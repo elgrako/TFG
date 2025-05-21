@@ -11,6 +11,7 @@
         android:id="@+id/comentariosGuardiaField"
         android:layout_width="375dp"
         android:layout_height="176dp"
+        android:layout_marginTop="84dp"
         android:background="@android:drawable/editbox_background"
         android:gravity="top|start"
         android:hint="Escribe un breve informe sobre la guardia"
@@ -19,18 +20,16 @@
         android:minLines="4"
         android:padding="8dp"
         android:scrollbars="vertical"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintVertical_bias="0.049" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Switch
         android:id="@+id/switchPresentadoGuardia"
-        tools:ignore="UseSwitchCompatOrMaterialXml"
         android:layout_width="230dp"
         android:layout_height="60dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="12dp"
         android:text="Pendiente"
         android:textColor="#D7585858"
         android:textSize="20sp"
@@ -38,14 +37,14 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/comentariosGuardiaField" />
+        app:layout_constraintTop_toBottomOf="@+id/comentariosGuardiaField"
+        tools:ignore="UseSwitchCompatOrMaterialXml" />
 
     <Switch
         android:id="@+id/switchPagadoGuardia"
-        tools:ignore="UseSwitchCompatOrMaterialXml"
         android:layout_width="230dp"
         android:layout_height="60dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="16dp"
         android:text="Por Pagar"
         android:textColor="#D7585858"
         android:textSize="20sp"
@@ -53,14 +52,14 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/switchValidadoGuardia" />
+        app:layout_constraintTop_toBottomOf="@+id/switchValidadoGuardia"
+        tools:ignore="UseSwitchCompatOrMaterialXml" />
 
     <Switch
         android:id="@+id/switchValidadoGuardia"
-        tools:ignore="UseSwitchCompatOrMaterialXml"
         android:layout_width="230dp"
         android:layout_height="60dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="16dp"
         android:text="Por Validar"
         android:textColor="#D7585858"
         android:textSize="20sp"
@@ -68,13 +67,14 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/switchPresentadoGuardia" />
+        app:layout_constraintTop_toBottomOf="@+id/switchPresentadoGuardia"
+        tools:ignore="UseSwitchCompatOrMaterialXml" />
 
     <EditText
         android:id="@+id/nTalonGuardiaField"
         android:layout_width="340dp"
         android:layout_height="50dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="16dp"
         android:background="@android:drawable/editbox_background"
         android:hint="Número de Talón"
         android:inputType="number"
@@ -99,18 +99,6 @@
         app:layout_constraintTop_toBottomOf="@+id/nTalonGuardiaField" />
 
     <Button
-        android:id="@+id/cancelarSituacionGuardiaButton"
-        android:layout_width="160dp"
-        android:layout_height="50dp"
-        android:text="Cancelar"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/guardarSituacionGuardiaButton"
-        app:layout_constraintHorizontal_bias="0.09"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/eurosGuardiaField"
-        app:layout_constraintVertical_bias="0.712" />
-
-    <Button
         android:id="@+id/guardarSituacionGuardiaButton"
         android:layout_width="160dp"
         android:layout_height="50dp"
@@ -120,6 +108,31 @@
         app:layout_constraintHorizontal_bias="0.91"
         app:layout_constraintStart_toEndOf="@+id/cancelarSituacionGuardiaButton"
         app:layout_constraintTop_toBottomOf="@+id/eurosGuardiaField"
-        app:layout_constraintVertical_bias="0.726" />
+        app:layout_constraintVertical_bias="1.0" />
+
+    <Button
+        android:id="@+id/cancelarSituacionGuardiaButton"
+        android:layout_width="160dp"
+        android:layout_height="50dp"
+        android:text="Cancelar"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/guardarSituacionGuardiaButton"
+        app:layout_constraintHorizontal_bias="0.09"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/eurosGuardiaField"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <Button
+        android:id="@+id/btnIrApelacion"
+        android:layout_width="140dp"
+        android:layout_height="38dp"
+        android:text="Ir a Apelación"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.983"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.057" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

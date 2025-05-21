@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Switch;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,9 +15,9 @@ public class SituacionGuardiaActivity extends AppCompatActivity {
 
     EditText comentariosField, nTalonField, eurosField;
     Switch presentadoSwitch, validadoSwitch, pagadoSwitch;
-    Button cancelarButton, guardarButton;
+    Button cancelarButton, guardarButton, btnIrApelacion;
     DatabaseHelper dbh;
-    String nombreAsistido;
+    int guardiaId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,21 +34,32 @@ public class SituacionGuardiaActivity extends AppCompatActivity {
         pagadoSwitch = findViewById(R.id.switchPagadoGuardia);
         cancelarButton = findViewById(R.id.cancelarSituacionGuardiaButton);
         guardarButton = findViewById(R.id.guardarSituacionGuardiaButton);
+        btnIrApelacion = findViewById(R.id.btnIrApelacion);
 
-        nombreAsistido = getIntent().getStringExtra("nombreAsistido");
+        guardiaId = getIntent().getIntExtra("guardia_id", -1);
 
-        Cursor cursor = dbh.obtenerSituacionGuardia(nombreAsistido);
+        if (guardiaId == -1) {
+            Toast.makeText(this, "Error al recibir la guardia", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
+
+        Cursor cursor = dbh.obtenerSituacionGuardiaPorId(guardiaId);
         if (cursor != null && cursor.moveToFirst()) {
             comentariosField.setText(cursor.getString(0));
             nTalonField.setText(cursor.getString(1));
             eurosField.setText(cursor.getString(2));
-
             actualizarEstadoSwitch(presentadoSwitch, cursor.getInt(3) == 1, "Presentado", "Pendiente");
             actualizarEstadoSwitch(validadoSwitch, cursor.getInt(4) == 1, "Validado", "Por Validar");
             actualizarEstadoSwitch(pagadoSwitch, cursor.getInt(5) == 1, "Pagado", "Por Pagar");
-
             cursor.close();
         }
+
+        btnIrApelacion.setOnClickListener(v -> {
+            Intent intent = new Intent(this, ApelacionGuardiaActivity.class);
+            intent.putExtra("guardia_id", guardiaId);
+            startActivity(intent);
+        });
 
         presentadoSwitch.setOnCheckedChangeListener((b, isChecked) ->
                 actualizarEstadoSwitch(presentadoSwitch, isChecked, "Presentado", "Pendiente"));
@@ -65,11 +75,14 @@ public class SituacionGuardiaActivity extends AppCompatActivity {
             String nTalon = nTalonField.getText().toString().trim();
             String euros = eurosField.getText().toString().trim();
 
-            int presentado = presentadoSwitch.isChecked() ? 1 : 0;
-            int validado = validadoSwitch.isChecked() ? 1 : 0;
-            int pagado = pagadoSwitch.isChecked() ? 1 : 0;
+            int presentado = 0;
+            if (presentadoSwitch.isChecked()) presentado = 1;
+            int validado = 0;
+            if (validadoSwitch.isChecked()) validado = 1;
+            int pagado = 0;
+            if (pagadoSwitch.isChecked()) pagado = 1;
 
-            boolean ok = dbh.insertarSituacionGuardia(nombreAsistido, comentarios, nTalon, euros, presentado, validado, pagado);
+            boolean ok = dbh.insertarSituacionGuardiaPorId(guardiaId, comentarios, nTalon, euros, presentado, validado, pagado);
             if (ok) {
                 Toast.makeText(this, "Situación guardada", Toast.LENGTH_SHORT).show();
                 finish();

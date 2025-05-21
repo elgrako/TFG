@@ -38,8 +38,8 @@ public class MainActivity extends AppCompatActivity {
         listViewDatos = findViewById(R.id.listaDatosMain);
         listaDatos = new ArrayList<>();
 
-        TextView verGuardias = findViewById(R.id.verGuardias);
-        TextView verJudiciales = findViewById(R.id.verJudiciales);
+        TextView verGuardias = findViewById(R.id.verGuardiasMain);
+        TextView verJudiciales = findViewById(R.id.verJudicialesMain);
 
         verGuardias.setOnClickListener(v -> {
             verGuardias.setTextColor(Color.DKGRAY);
@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
         View headerView = inflater.inflate(R.layout.header_datos, listViewDatos, false);
         listViewDatos.addHeaderView(headerView);
 
-        Button newButton = findViewById(R.id.newMainButton);
+        Button newButton = findViewById(R.id.newJudicialButton);
         registerForContextMenu(listViewDatos);
 
         cargarDatos();

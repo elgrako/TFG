@@ -7,53 +7,55 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <Button
+        android:id="@+id/newJudicialButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="28dp"
+        android:backgroundTint="#2ECC71"
+        android:text="Nuevo Judicial"
+        android:textColor="#FFFFFF"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent" />
+
     <TextView
-        android:id="@+id/verJudiciales"
-        android:layout_width="114dp"
-        android:layout_height="34dp"
-        android:layout_marginStart="144dp"
-        android:layout_marginTop="60dp"
+        android:id="@+id/verJudicialesMain"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="80dp"
+        android:layout_marginEnd="16dp"
         android:text="Judiciales"
-        app:layout_constraintStart_toEndOf="@+id/verGuardias"
+        android:textColor="#3498DB"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/verGuardiasMain"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="80dp"
+        android:text="Guardias"
+        android:textColor="#2ECC71"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ListView
         android:id="@+id/listaDatosMain"
-        android:layout_width="381dp"
-        android:layout_height="527dp"
+        android:layout_width="397dp"
+        android:layout_height="526dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.583" />
+        app:layout_constraintVertical_bias="0.565" />
 
-    <Button
-        android:id="@+id/newMainButton"
-        android:layout_width="101dp"
-        android:layout_height="51dp"
-        android:layout_marginStart="152dp"
-        android:layout_marginBottom="28dp"
-        android:text="Nuevo"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/listaDatosMain"
-        app:layout_constraintVertical_bias="1.0" />
-
-    <TextView
-        android:id="@+id/verGuardias"
-        android:layout_width="114dp"
-        android:layout_height="34dp"
-        android:layout_marginStart="21dp"
-        android:layout_marginTop="17dp"
-        android:layout_marginEnd="146dp"
-        android:layout_marginBottom="7dp"
-        android:text="Guardias"
-        app:layout_constraintBottom_toTopOf="@+id/listaDatosMain"
-        app:layout_constraintEnd_toStartOf="@+id/verJudiciales"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.721" />
 </androidx.constraintlayout.widget.ConstraintLayout>

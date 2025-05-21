@@ -3,6 +3,7 @@ package com.example.tfg;
 import android.annotation.SuppressLint;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -33,6 +34,8 @@ public class MainGuardiaActivity extends AppCompatActivity {
         dbh = new DatabaseHelper(this);
         listViewGuardias = findViewById(R.id.listaGuardias);
         listaGuardias = new ArrayList<>();
+
+        registerForContextMenu(listViewGuardias);
 
         TextView verGuardias = findViewById(R.id.verGuardias);
         TextView verJudiciales = findViewById(R.id.verJudiciales);
@@ -69,12 +72,13 @@ public class MainGuardiaActivity extends AppCompatActivity {
         @SuppressLint("Range") Cursor cursor = dbh.obtenerGuardias();
         if (cursor != null && cursor.moveToFirst()) {
             do {
+                @SuppressLint("Range") int id = cursor.getInt(cursor.getColumnIndex("id"));
                 @SuppressLint("Range") String nombre = cursor.getString(cursor.getColumnIndex("nombreAsistido"));
                 @SuppressLint("Range") String dia = cursor.getString(cursor.getColumnIndex("diaActuacion"));
                 @SuppressLint("Range") int juzgado = cursor.getInt(cursor.getColumnIndex("porJuzgado"));
                 @SuppressLint("Range") int cobrado = cursor.getInt(cursor.getColumnIndex("cobrado"));
 
-                listaGuardias.add(new Guardia(nombre, dia, juzgado == 1, cobrado == 1));
+                listaGuardias.add(new Guardia(id, nombre, dia, juzgado == 1, cobrado == 1));
             } while (cursor.moveToNext());
             cursor.close();
         }
@@ -99,4 +103,31 @@ public class MainGuardiaActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        getMenuInflater().inflate(R.menu.guardia_context, menu);
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        int position = info.position;
+        if (position == 0) {
+            return false;
+        }
+        Guardia guardiaSeleccionada = listaGuardias.get(position - 1);
+
+        if (item.getItemId() == R.id.situacion_guardia_context) {
+            Intent intent = new Intent(this, SituacionGuardiaActivity.class);
+            intent.putExtra("guardia_id", guardiaSeleccionada.getId());
+            startActivity(intent);
+            return true;
+        }
+
+        return super.onContextItemSelected(item);
+    }
+
+
 }

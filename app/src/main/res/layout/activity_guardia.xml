@@ -9,25 +9,42 @@
     android:background="#FAFAFA"
     tools:context=".GuardiaActivity">
 
-    <EditText
+
+    <TextView
         android:id="@+id/diaActuacionField"
         android:layout_width="0dp"
         android:layout_height="50dp"
-        android:layout_marginTop="72dp"
+        android:layout_marginTop="108dp"
         android:background="@android:drawable/editbox_background"
+        android:gravity="center_vertical"
         android:hint="Día de actuación"
-        android:inputType="text"
-        android:padding="10dp"
+        android:padding="12dp"
+        android:textColor="@android:color/black"
+        android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <EditText
+        android:id="@+id/nombreAsistidoField"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="28dp"
+        android:background="@android:drawable/editbox_background"
+        android:hint="Nombre del asistido"
+        android:inputType="textPersonName"
+        android:padding="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/diaActuacionField" />
+
     <Switch
         android:id="@+id/switchporJuzgado"
         android:layout_width="0dp"
         android:layout_height="60dp"
-        android:layout_marginTop="28dp"
+        android:layout_marginTop="36dp"
         android:paddingStart="8dp"
         android:text="¿Pasa por Juzgado?"
         android:textColor="#D7585858"
@@ -43,7 +60,7 @@
         android:id="@+id/switchcobrado"
         android:layout_width="0dp"
         android:layout_height="60dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="12dp"
         android:paddingStart="8dp"
         android:text="¿Ha cobrado?"
         android:textColor="#D7585858"
@@ -59,7 +76,7 @@
         android:id="@+id/guardarGuardiaButton"
         android:layout_width="0dp"
         android:layout_height="50dp"
-        android:layout_marginTop="204dp"
+        android:layout_marginTop="224dp"
         android:backgroundTint="#2ECC71"
         android:text="Guardar Guardia"
         android:textColor="#FFFFFF"
@@ -67,19 +84,5 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/switchcobrado" />
-
-    <EditText
-        android:id="@+id/nombreAsistidoField"
-        android:layout_width="0dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="32dp"
-        android:background="@android:drawable/editbox_background"
-        android:hint="Nombre del asistido"
-        android:inputType="textPersonName"
-        android:padding="10dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/diaActuacionField" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

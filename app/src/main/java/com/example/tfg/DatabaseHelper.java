@@ -11,11 +11,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "tfgDatabase.db";
 
     public DatabaseHelper(@Nullable Context context) {
-        super(context, DATABASE_NAME, null, 5);
+        super(context, DATABASE_NAME, null, 6);
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+        db.execSQL("PRAGMA foreign_keys=ON");
+
         String createTableDatos = "CREATE TABLE Datos (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT," +
                 "nombre TEXT UNIQUE," +
@@ -45,30 +47,37 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "cobrado INTEGER DEFAULT 0)";
         db.execSQL(createGuardiaTable);
 
-        String createSituacionGuardia = "CREATE TABLE IF NOT EXISTS SituacionGuardia (" +
+        String createSituacionGuardia = "CREATE TABLE SituacionGuardia (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                "nombreAsistido TEXT UNIQUE," +
+                "guardia_id INTEGER UNIQUE," +
                 "comentarios TEXT," +
                 "nTalon TEXT," +
                 "euros TEXT," +
                 "presentado INTEGER DEFAULT 0," +
                 "validado INTEGER DEFAULT 0," +
-                "pagado INTEGER DEFAULT 0)";
+                "pagado INTEGER DEFAULT 0," +
+                "FOREIGN KEY(guardia_id) REFERENCES Guardia(id) ON DELETE CASCADE)";
         db.execSQL(createSituacionGuardia);
 
         String createApelacionGuardiaTable = "CREATE TABLE ApelacionGuardia (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "guardia_id INTEGER," +
                 "nExpediente TEXT," +
                 "admitido INTEGER," +
                 "presentado INTEGER," +
-                "sentencia INTEGER)";
+                "sentencia INTEGER," +
+                "FOREIGN KEY(guardia_id) REFERENCES Guardia(id) ON DELETE CASCADE)";
         db.execSQL(createApelacionGuardiaTable);
-
     }
 
-    @Override
+
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS Datos");
+        db.execSQL("DROP TABLE IF EXISTS Usuarios");
+        db.execSQL("DROP TABLE IF EXISTS Guardia");
+        db.execSQL("DROP TABLE IF EXISTS SituacionGuardia");
+        db.execSQL("DROP TABLE IF EXISTS ApelacionGuardia");
+
         onCreate(db);
     }
 
@@ -140,6 +149,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return exists;
     }
 
+
+    public Cursor obtenerGuardias() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        return db.rawQuery("SELECT * FROM Guardia", null);
+    }
     public boolean insertarGuardia(String nombreAsistido, String diaActuacion, boolean porJuzgado, boolean cobrado) {
         int porJuzgadoInt = 0;
         if (porJuzgado) porJuzgadoInt = 1;
@@ -157,30 +171,27 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         });
         return true;
     }
-    public Cursor obtenerGuardias() {
+
+
+    public Cursor obtenerSituacionGuardiaPorId(int guardiaId) {
         SQLiteDatabase db = this.getReadableDatabase();
-        return db.rawQuery("SELECT * FROM Guardia", null);
+        return db.rawQuery("SELECT comentarios, nTalon, euros, presentado, validado, pagado FROM SituacionGuardia WHERE guardia_id = ?", new String[]{String.valueOf(guardiaId)});
     }
 
-    public boolean insertarSituacionGuardia(String nombre, String comentarios, String nTalon, String euros, int presentado, int validado, int pagado) {
+    public boolean insertarSituacionGuardiaPorId(int guardiaId, String comentarios, String nTalon, String euros, int presentado, int validado, int pagado) {
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM SituacionGuardia WHERE nombreAsistido = ?", new String[]{nombre});
+        Cursor cursor = db.rawQuery("SELECT * FROM SituacionGuardia WHERE guardia_id = ?", new String[]{String.valueOf(guardiaId)});
         boolean exists = cursor.moveToFirst();
         cursor.close();
 
         if (exists) {
-            String query = "UPDATE SituacionGuardia SET comentarios = ?, nTalon = ?, euros = ?, presentado = ?, validado = ?, pagado = ? WHERE nombreAsistido = ?";
-            db.execSQL(query, new Object[]{comentarios, nTalon, euros, presentado, validado, pagado, nombre});
+            String query = "UPDATE SituacionGuardia SET comentarios = ?, nTalon = ?, euros = ?, presentado = ?, validado = ?, pagado = ? WHERE guardia_id = ?";
+            db.execSQL(query, new Object[]{comentarios, nTalon, euros, presentado, validado, pagado, guardiaId});
         } else {
-            String query = "INSERT INTO SituacionGuardia (nombreAsistido, comentarios, nTalon, euros, presentado, validado, pagado) VALUES (?, ?, ?, ?, ?, ?, ?)";
-            db.execSQL(query, new Object[]{nombre, comentarios, nTalon, euros, presentado, validado, pagado});
+            String query = "INSERT INTO SituacionGuardia (guardia_id, comentarios, nTalon, euros, presentado, validado, pagado) VALUES (?, ?, ?, ?, ?, ?, ?)";
+            db.execSQL(query, new Object[]{guardiaId, comentarios, nTalon, euros, presentado, validado, pagado});
         }
         return true;
-    }
-
-    public Cursor obtenerSituacionGuardia(String nombre) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        return db.rawQuery("SELECT comentarios, nTalon, euros, presentado, validado, pagado FROM SituacionGuardia WHERE nombreAsistido = ?", new String[]{nombre});
     }
 
 
