@@ -124,10 +124,18 @@ public class MainGuardiaActivity extends AppCompatActivity {
             intent.putExtra("guardia_id", guardiaSeleccionada.getId());
             startActivity(intent);
             return true;
+        } else if (item.getItemId() == R.id.delete_guardia_context) {
+            boolean eliminado = dbh.borrarGuardiaPorId(guardiaSeleccionada.getId());
+            if (eliminado) {
+                Toast.makeText(this, "Guardia eliminada", Toast.LENGTH_SHORT).show();
+                cargarGuardias();
+            } else {
+                Toast.makeText(this, "No se pudo eliminar la guardia", Toast.LENGTH_SHORT).show();
+            }
+            return true;
         }
+
 
         return super.onContextItemSelected(item);
     }
-
-
 }

@@ -149,7 +149,17 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(this, "No hay un numero de teléfono asignado", Toast.LENGTH_SHORT).show();
             }
             return true;
+        } else if (item.getItemId() == R.id.delete_context) {
+            boolean deleted = dbh.borrarJudicialPorNombre(datosSeleccionado.getNombre());
+            if (deleted) {
+                Toast.makeText(this, "Registro eliminado", Toast.LENGTH_SHORT).show();
+                cargarDatos();
+            } else {
+                Toast.makeText(this, "No se pudo eliminar", Toast.LENGTH_SHORT).show();
+            }
+            return true;
         }
+
 
         return super.onContextItemSelected(item);
     }

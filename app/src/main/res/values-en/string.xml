@@ -1,0 +1,75 @@
+<resources>
+    <!--ApelacionGuardiaActivity-->
+    <string name="switchAdmitidoApelacion">Rejected</string>
+    <string name="switchPresentadoApelacion">Pending</string>
+    <string name="switchSentenciaApelacion">Appeal</string>
+    <string name="nExpedienteApelacion">Appeal File Number</string>
+    <string name="guardarApelacionbtn">Save</string>
+    <string name="CancelarApelacionbtn">Cancel</string>
+
+    <!--EditActivity-->
+    <string name="siguienteEditbtn">Next</string>
+    <string name="volverEditbtn">Back</string>
+    <string name="nombreEdit">Name</string>
+    <string name="dniEdit">ID</string>
+    <string name="nExpedienteEdit">Case Number</string>
+    <string name="telefonoEdit">Phone</string>
+    <string name="emailEdit">Email</string>
+
+    <!--GuardiaActivity-->
+    <string name="diaActuacion">Date of Action</string>
+    <string name="nombreAsistido">Name of the Assisted</string>
+    <string name="porJuzgado">Goes through Court?</string>
+    <string name="cobradoGuardia">Has been paid?</string>
+    <string name="guardarGuardiaBtn">Save Guard</string>
+
+    <!--LoginActivity-->
+    <string name="loginTitle">Login</string>
+    <string name="usuarioLogin">Username</string>
+    <string name="contrasenaLogin">Password</string>
+    <string name="iniciarSesionBtn">Sign In</string>
+    <string name="registrarseBtn">Register</string>
+
+    <!--MainActivity-->
+    <string name="nuevoJudicialBtn">New Judicial</string>
+    <string name="tituloJudiciales">Judicials</string>
+    <string name="tituloGuardias">Guards</string>
+
+    <!--MainGuardiaActivity-->
+    <string name="nuevaGuardiaBtn">New Guardia</string>
+    <string name="verGuardias">Guards</string>
+    <string name="verJudiciales">Judicials</string>
+
+    <!--Register-->
+    <string name="registerTitle">User Registration</string>
+    <string name="registerUserHint">Username</string>
+    <string name="registerPassHint">Password</string>
+    <string name="volverLoginBtn">Back to Login</string>
+
+    <!--Situacion1Activity-->
+    <string name="comentarioSituacion1">Write a brief report about the situation</string>
+    <string name="switchPendiente1">Pending</string>
+    <string name="switchValidado1">To Validate</string>
+    <string name="switchPagado1">To Pay</string>
+    <string name="nTalon1">Check Number</string>
+    <string name="euros1">Amount (€)</string>
+    <string name="cancelar1Btn">Cancel</string>
+    <string name="finalizar1Btn">Finish</string>
+
+    <!--SituacionGuardiaActivity-->
+    <string name="comentarioGuardia">Write a brief report about the guard</string>
+    <string name="switchPresentadoGuardia">Pending</string>
+    <string name="switchValidadoGuardia">To Validate</string>
+    <string name="switchPagadoGuardia">To Pay</string>
+    <string name="nTalonGuardia">Check Number</string>
+    <string name="eurosGuardia">Amount (€)</string>
+    <string name="guardarSituacionBtn">Save</string>
+    <string name="cancelarSituacionBtn">Cancel</string>
+    <string name="irApelacionBtn">Go to Appeal</string>
+
+    <!--Contextual-->
+    <string name="borrarContextual">Delete</string>
+    <string name="EditContextual">Edit</string>
+    <string name="EditGuardiaContextual">Edit Guard</string>
+    <string name="borrarGuardiaContextual">Delete Guard</string>
+</resources>

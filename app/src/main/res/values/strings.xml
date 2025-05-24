@@ -1,3 +1,75 @@
 <resources>
-    <string name="app_name">tfg</string>
+    <!--ApelacionGuardiaActivity-->
+    <string name="switchAdmitidoApelacion">Rechazado</string>
+    <string name="switchPresentadoApelacion">Pendiente</string>
+    <string name="switchSentenciaApelacion">Apelación</string>
+    <string name="nExpedienteApelacion">Nº Expediente Apelación</string>
+    <string name="guardarApelacionbtn">Guardar</string>
+    <string name="CancelarApelacionbtn">Cancelar</string>
+
+    <!--EditActivity-->
+    <string name="siguienteEditbtn">Siguiente</string>
+    <string name="volverEditbtn">Volver</string>
+    <string name="nombreEdit">Nombre</string>
+    <string name="dniEdit">Dni</string>
+    <string name="nExpedienteEdit">Numero Expediente</string>
+    <string name="telefonoEdit">Teléfono</string>
+    <string name="emailEdit">Correo electrónico</string>
+
+    <!--GuardiaActivity-->
+    <string name="diaActuacion">Día de actuación</string>
+    <string name="nombreAsistido">Nombre del asistido</string>
+    <string name="porJuzgado">¿Pasa por Juzgado?</string>
+    <string name="cobradoGuardia">¿Ha cobrado?</string>
+    <string name="guardarGuardiaBtn">Guardar Guardia</string>
+
+    <!--LoginActivity-->
+    <string name="loginTitle">Inicio de Sesión</string>
+    <string name="usuarioLogin">Usuario</string>
+    <string name="contrasenaLogin">Contraseña</string>
+    <string name="iniciarSesionBtn">Iniciar Sesión</string>
+    <string name="registrarseBtn">Registrarse</string>
+
+    <!--MainActivity-->
+    <string name="nuevoJudicialBtn">Nuevo Judicial</string>
+    <string name="tituloJudiciales">Judiciales</string>
+    <string name="tituloGuardias">Guardias</string>
+
+    <!--MainGuardiaActivity-->
+    <string name="nuevaGuardiaBtn">Nueva Guardia</string>
+    <string name="verGuardias">Guardias</string>
+    <string name="verJudiciales">Judicial</string>
+
+    <!--Registro-->
+    <string name="registerTitle">Registro de Usuario</string>
+    <string name="registerUserHint">Usuario</string>
+    <string name="registerPassHint">Contraseña</string>
+    <string name="volverLoginBtn">Volver al Login</string>
+
+    <!--Situacion1Activity-->
+    <string name="comentarioSituacion1">Escribe un breve informe sobre la situacion</string>
+    <string name="switchPendiente1">Pendiente</string>
+    <string name="switchValidado1">Por Validar</string>
+    <string name="switchPagado1">Por Pagar</string>
+    <string name="nTalon1">Número de Talón</string>
+    <string name="euros1">Cantidad (€)</string>
+    <string name="cancelar1Btn">Cancelar</string>
+    <string name="finalizar1Btn">Finalizar</string>
+
+    <!--SituacionGuardiaActivity-->
+    <string name="comentarioGuardia">Escribe un breve informe sobre la guardia</string>
+    <string name="switchPresentadoGuardia">Pendiente</string>
+    <string name="switchValidadoGuardia">Por Validar</string>
+    <string name="switchPagadoGuardia">Por Pagar</string>
+    <string name="nTalonGuardia">Número de Talón</string>
+    <string name="eurosGuardia">Cantidad (€)</string>
+    <string name="guardarSituacionBtn">Guardar</string>
+    <string name="cancelarSituacionBtn">Cancelar</string>
+    <string name="irApelacionBtn">Ir a Apelación</string>
+
+    <!--Contextual-->
+    <string name="borrarContextual">Borrar</string>
+    <string name="EditContextual">Editar</string>
+    <string name="EditGuardiaContextual">Editar Guardia</string>
+    <string name="borrarGuardiaContextual">Borrar Guardia</string>
 </resources>

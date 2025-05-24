@@ -4,11 +4,14 @@
 
     <item
         android:id="@+id/edit_context"
-        android:title="Editar" />
+        android:title="@string/EditContextual" />
+    <item
+        android:id="@+id/delete_context"
+        android:title="@string/borrarContextual" />
     <item
         android:id="@+id/correo_context"
-        android:title="Correo" />
+        android:title="@string/emailEdit" />
     <item
         android:id="@+id/telefono_context"
-        android:title="Telefono" />
+        android:title="@string/telefonoEdit" />
 </menu>

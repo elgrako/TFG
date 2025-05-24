@@ -218,5 +218,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return db.rawQuery("SELECT * FROM ApelacionGuardia", null);
     }
 
-
+    public boolean borrarJudicialPorNombre(String nombre) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        int rows = db.delete("Datos", "nombre = ?", new String[]{nombre});
+        return rows > 0;
+    }
+    public boolean borrarGuardiaPorId(int id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        int rows = db.delete("Guardia", "id = " + id, null);
+        return rows > 0;
+    }
 }
