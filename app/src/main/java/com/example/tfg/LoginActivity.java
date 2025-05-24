@@ -41,7 +41,7 @@ public class LoginActivity extends AppCompatActivity {
                 startActivity(new Intent(this, MainActivity.class));
                 finish();
             } else {
-                Toast.makeText(this, "Credenciales incorrectas", Toast.LENGTH_SHORT).show();
+                ToastHelper.error(this, "Credenciales incorrectas");
             }
         });
 

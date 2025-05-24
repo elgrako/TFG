@@ -28,11 +28,14 @@ public class MainActivity extends AppCompatActivity {
     ListView listViewDatos;
     ArrayList<Datos> listaDatos;
     ArrayAdapter<Datos> adapter;
+    NotificationHelper nh;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        nh = new NotificationHelper();
 
         dbh = new DatabaseHelper(this);
         listViewDatos = findViewById(R.id.listaDatosMain);
@@ -136,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
                 emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Consulta sobre el expediente");
                 startActivity(Intent.createChooser(emailIntent, "Enviar email"));
             } else {
-                Toast.makeText(this, "No hay un correo electronico asignado", Toast.LENGTH_SHORT).show();
+                ToastHelper.info(this, "No hay correo asignado");
             }
             return true;
 
@@ -146,16 +149,20 @@ public class MainActivity extends AppCompatActivity {
                 callIntent.setData(Uri.parse("tel:" + telefono));
                 startActivity(callIntent);
             } else {
-                Toast.makeText(this, "No hay un numero de teléfono asignado", Toast.LENGTH_SHORT).show();
+                ToastHelper.info(this, "No hay número de teléfono asignado");
             }
             return true;
         } else if (item.getItemId() == R.id.delete_context) {
             boolean deleted = dbh.borrarJudicialPorNombre(datosSeleccionado.getNombre());
             if (deleted) {
-                Toast.makeText(this, "Registro eliminado", Toast.LENGTH_SHORT).show();
+                nh.Notification(
+                        this,
+                        "Judicial eliminado",
+                        "Se ha eliminado el registro de " + datosSeleccionado.getNombre()
+                );
                 cargarDatos();
             } else {
-                Toast.makeText(this, "No se pudo eliminar", Toast.LENGTH_SHORT).show();
+                ToastHelper.error(this, "Error al eliminar");
             }
             return true;
         }

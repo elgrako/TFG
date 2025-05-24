@@ -29,8 +29,7 @@ public class RegisterActivity extends AppCompatActivity {
             String pass = passField.getText().toString().trim();
 
             if (user.isEmpty() || pass.isEmpty()) {
-                Toast.makeText(this, "Rellena todos los campos", Toast.LENGTH_SHORT).show();
-                return;
+                ToastHelper.info(this, "Rellena todos los campos");
             }
 
             if (dbh.insertarUsuario(user, pass)) {
@@ -38,7 +37,7 @@ public class RegisterActivity extends AppCompatActivity {
                 startActivity(new Intent(this, LoginActivity.class));
                 finish();
             } else {
-                Toast.makeText(this, "Usuario ya existente o error", Toast.LENGTH_SHORT).show();
+                ToastHelper.error(this, "Usuario ya existente o error");
             }
         });
 
