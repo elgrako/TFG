@@ -24,6 +24,7 @@ public class GuardiaActivity extends AppCompatActivity {
     Switch porJuzgadoSwitch, cobradoSwitch;
     Button guardarButton;
     DatabaseHelper dbh;
+    NotificationHelper nh;
 
     private Date selectedDate;
     private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
@@ -34,6 +35,7 @@ public class GuardiaActivity extends AppCompatActivity {
         setContentView(R.layout.activity_guardia);
 
         dbh = new DatabaseHelper(this);
+        nh = new NotificationHelper();
 
         diaField = findViewById(R.id.diaActuacionField);
         nombreAsistidoField = findViewById(R.id.nombreAsistidoField);
@@ -74,26 +76,24 @@ public class GuardiaActivity extends AppCompatActivity {
             boolean cobrado = cobradoSwitch.isChecked();
 
             if (nombre.isEmpty()) {
-                Toast.makeText(this, "Introduce el nombre del asistido", Toast.LENGTH_SHORT).show();
+                ToastHelper.info(this, "Introduce el nombre del asistido");
                 return;
             }
 
             String diaActuacion = sdf.format(selectedDate);
             boolean insertado = dbh.insertarGuardia(nombre, diaActuacion, juzgado, cobrado);
+
             if (insertado) {
-                Toast.makeText(this, "Guardia guardada", Toast.LENGTH_SHORT).show();
-
-
+                nh.Notification(this, "Guardia registrada", "Guardia guardada correctamente para " + nombre);
                 Intent intent = new Intent(this, SituacionGuardiaActivity.class);
                 intent.putExtra("nombreAsistido", nombre);
                 startActivity(intent);
                 finish();
             } else {
-                Toast.makeText(this, "Error al guardar", Toast.LENGTH_SHORT).show();
+                ToastHelper.error(this, "Error al guardar la guardia");
             }
         });
     }
-
     private void actualizarEstadoSwitch(Switch s, boolean check, String TextYes, String TextNo) {
         s.setChecked(check);
         if (check) {

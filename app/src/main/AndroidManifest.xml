@@ -50,9 +50,6 @@
         <activity
             android:name=".Situacion1Activity"
             android:exported="false" />
-        <activity
-            android:name=".Situacion2Activity"
-            android:exported="false" />
     </application>
 
 </manifest>

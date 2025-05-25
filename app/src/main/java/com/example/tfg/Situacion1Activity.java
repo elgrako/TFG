@@ -17,12 +17,16 @@ import java.text.NumberFormat;
 import java.util.Currency;
 
 public class Situacion1Activity extends AppCompatActivity {
+    NotificationHelper nh;
+    DatabaseHelper dbh;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_situacion1);
+
+        nh = new NotificationHelper();
 
         Button finishButton = findViewById(R.id.next1SitButton);
         Button cancelButton = findViewById(R.id.cancel1SitButton);
@@ -42,7 +46,7 @@ public class Situacion1Activity extends AppCompatActivity {
         String textoEuros = format.format(euros);
         euros1Sit.setText(textoEuros);
 
-        DatabaseHelper dbh = new DatabaseHelper(this);
+        dbh = new DatabaseHelper(this);
         Cursor cursor = dbh.obtenerSituacion1(nombre);
         if (cursor != null && cursor.moveToFirst()) {
             int presentado = cursor.getInt(0);
@@ -98,10 +102,11 @@ public class Situacion1Activity extends AppCompatActivity {
             boolean updated = dbh.updateSituacion1(nombre, presentado, validado, pagado, nTalon, comentarios);
 
             if (updated) {
+                nh.Notification(this, "Situación actualizada", "Cambios guardados para " + nombre);
                 startActivity(new Intent(this, MainActivity.class));
                 finish();
             } else {
-                Toast.makeText(this, "Error al actualizar o guardar", Toast.LENGTH_SHORT).show();
+                ToastHelper.error(this, "Error al actualizar o guardar");
             }
         });
 

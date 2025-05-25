@@ -17,6 +17,7 @@ public class ApelacionGuardiaActivity extends AppCompatActivity {
     EditText expedienteField;
     Button guardarButton, cancelarButton;
     DatabaseHelper dbh;
+    NotificationHelper nh;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +32,7 @@ public class ApelacionGuardiaActivity extends AppCompatActivity {
         cancelarButton = findViewById(R.id.cancelarApelacionGuardiaButton);
 
         dbh = new DatabaseHelper(this);
+        nh = new NotificationHelper();
 
         cargarDatosSiExisten();
 
@@ -50,16 +52,16 @@ public class ApelacionGuardiaActivity extends AppCompatActivity {
             boolean sentencia = switchSentencia.isChecked();
 
             if (expediente.isEmpty()) {
-                Toast.makeText(this, "Introduce el número de expediente", Toast.LENGTH_SHORT).show();
+                ToastHelper.error(this, "Introduce el número de expediente");
                 return;
             }
 
             boolean insertado = dbh.insertarApelacionGuardia(expediente, admitido, presentado, sentencia);
             if (insertado) {
-                Toast.makeText(this, "Apelación guardada", Toast.LENGTH_SHORT).show();
+                nh.Notification(this, "Apelación guardada", "Se ha guardado correctamente la apelación");
                 finish();
             } else {
-                Toast.makeText(this, "Error al guardar", Toast.LENGTH_SHORT).show();
+                ToastHelper.error(this, "Error al guardar la apelación");
             }
         });
 

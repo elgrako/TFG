@@ -67,18 +67,36 @@ public class EditActivity extends AppCompatActivity {
     }
 
     private void guardarDatos() {
+        String nombreInput = nameField.getText().toString().trim();
         String dni = dniField.getText().toString().trim();
         String nExpediente = nExpedienteField.getText().toString().trim();
-        double euros = Double.parseDouble(eurosField.getText().toString().trim());
         String email = emailField.getText().toString().trim();
-        int telefono = Integer.parseInt(telefonoField.getText().toString().trim());
+        String eurosStr = eurosField.getText().toString().trim();
+        String telefonoStr = telefonoField.getText().toString().trim();
+
+        if (nombreInput.isEmpty() || dni.isEmpty() || nExpediente.isEmpty() || eurosStr.isEmpty() || telefonoStr.isEmpty()) {
+            ToastHelper.error(this, "Completa todos los campos");
+            return;
+        }
+
+        double euros;
+        int telefono;
+
+        try {
+            euros = Double.parseDouble(eurosStr);
+            telefono = Integer.parseInt(telefonoStr);
+        } catch (NumberFormatException e) {
+            ToastHelper.error(this, "Formato incorrecto");
+            return;
+        }
 
         if (nombre == null) {
-            nombre = nameField.getText().toString().trim();
+            nombre = nombreInput;
         }
 
         Datos datos = new Datos(nombre, dni, nExpediente, euros, email, telefono);
         dbh.insertarOActualizarDatosEdit(datos);
-        Toast.makeText(this, "Datos guardados", Toast.LENGTH_SHORT).show();
+        ToastHelper.info(this, "Datos guardados");
     }
+
 }

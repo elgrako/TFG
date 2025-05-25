@@ -25,6 +25,7 @@ public class MainGuardiaActivity extends AppCompatActivity {
     ListView listViewGuardias;
     ArrayList<Guardia> listaGuardias;
     ArrayAdapter<Guardia> adapter;
+    NotificationHelper nh;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +35,8 @@ public class MainGuardiaActivity extends AppCompatActivity {
         dbh = new DatabaseHelper(this);
         listViewGuardias = findViewById(R.id.listaGuardias);
         listaGuardias = new ArrayList<>();
+
+        nh = new NotificationHelper();
 
         registerForContextMenu(listViewGuardias);
 
@@ -125,15 +128,20 @@ public class MainGuardiaActivity extends AppCompatActivity {
             startActivity(intent);
             return true;
         } else if (item.getItemId() == R.id.delete_guardia_context) {
-            boolean eliminado = dbh.borrarGuardiaPorId(guardiaSeleccionada.getId());
-            if (eliminado) {
-                Toast.makeText(this, "Guardia eliminada", Toast.LENGTH_SHORT).show();
-                cargarGuardias();
-            } else {
-                Toast.makeText(this, "No se pudo eliminar la guardia", Toast.LENGTH_SHORT).show();
-            }
-            return true;
+        boolean eliminado = dbh.borrarGuardiaPorId(guardiaSeleccionada.getId());
+        if (eliminado) {
+            nh.Notification(
+                    this,
+                    "Guardia eliminada",
+                    "Se eliminó el registro de " + guardiaSeleccionada.getNombreAsistido()
+            );
+            cargarGuardias();
+        } else {
+            ToastHelper.error(this, "No se pudo eliminar la guardia");
         }
+        return true;
+    }
+
 
 
         return super.onContextItemSelected(item);

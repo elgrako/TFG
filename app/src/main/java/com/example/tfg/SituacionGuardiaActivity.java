@@ -17,6 +17,7 @@ public class SituacionGuardiaActivity extends AppCompatActivity {
     Switch presentadoSwitch, validadoSwitch, pagadoSwitch;
     Button cancelarButton, guardarButton, btnIrApelacion;
     DatabaseHelper dbh;
+    NotificationHelper nh;
     int guardiaId;
 
     @Override
@@ -25,6 +26,7 @@ public class SituacionGuardiaActivity extends AppCompatActivity {
         setContentView(R.layout.activity_situacion_guardia);
 
         dbh = new DatabaseHelper(this);
+        nh = new NotificationHelper();
 
         comentariosField = findViewById(R.id.comentariosGuardiaField);
         nTalonField = findViewById(R.id.nTalonGuardiaField);
@@ -39,7 +41,7 @@ public class SituacionGuardiaActivity extends AppCompatActivity {
         guardiaId = getIntent().getIntExtra("guardia_id", -1);
 
         if (guardiaId == -1) {
-            Toast.makeText(this, "Error al recibir la guardia", Toast.LENGTH_SHORT).show();
+            ToastHelper.error(this, "Error al recibir la guardia");
             finish();
             return;
         }
@@ -84,10 +86,10 @@ public class SituacionGuardiaActivity extends AppCompatActivity {
 
             boolean ok = dbh.insertarSituacionGuardiaPorId(guardiaId, comentarios, nTalon, euros, presentado, validado, pagado);
             if (ok) {
-                Toast.makeText(this, "Situación guardada", Toast.LENGTH_SHORT).show();
+                nh.Notification(this, "Situación guardada", "Se actualizó la situación de la guardia");
                 finish();
             } else {
-                Toast.makeText(this, "Error al guardar situación", Toast.LENGTH_SHORT).show();
+                ToastHelper.error(this, "Error al guardar situación");
             }
         });
 
