@@ -5,88 +5,98 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp">
-
-    <Switch
-        android:id="@+id/switchAdmitidoApelacion"
-        tools:ignore="UseSwitchCompatOrMaterialXml"
-        android:layout_width="230dp"
-        android:layout_height="60dp"
-        android:layout_marginTop="100dp"
-        android:text="@string/switchAdmitidoApelacion"
-        android:textColor="#D7585858"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.496"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Switch
-        android:id="@+id/switchPresentadoApelacion"
-        tools:ignore="UseSwitchCompatOrMaterialXml"
-        android:layout_width="230dp"
-        android:layout_height="60dp"
-        android:layout_marginTop="36dp"
-        android:text="@string/switchPresentadoApelacion"
-        android:textColor="#D7585858"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.496"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/switchAdmitidoApelacion" />
-
-    <Switch
-        android:id="@+id/switchSentenciaApelacion"
-        tools:ignore="UseSwitchCompatOrMaterialXml"
-        android:layout_width="230dp"
-        android:layout_height="60dp"
-        android:layout_marginTop="20dp"
-        android:text="@string/switchSentenciaApelacion"
-        android:textColor="#D7585858"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.496"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/switchPresentadoApelacion" />
+    android:padding="24dp"
+    android:background="#000000">
 
     <EditText
         android:id="@+id/nExpedienteApelacionField"
-        android:layout_width="340dp"
+        android:layout_width="0dp"
         android:layout_height="50dp"
-        android:layout_marginTop="60dp"
-        android:background="@android:drawable/editbox_background"
+        android:layout_marginTop="48dp"
+        android:autofillHints=""
+        android:background="@drawable/edittext_background"
         android:hint="@string/nExpedienteApelacion"
         android:inputType="text"
-        android:padding="8dp"
+        android:padding="12dp"
+        android:textColor="#FFFFFF"
+        android:textColorHint="#AAAAAA"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.512"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/switchSentenciaApelacion" />
 
-    <Button
-        android:id="@+id/cancelarApelacionGuardiaButton"
-        android:layout_width="160dp"
-        android:layout_height="50dp"
-        android:text="@string/CancelarApelacionbtn"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/guardarApelacionGuardiaButton"
-        app:layout_constraintHorizontal_bias="0.1"
+    <Switch
+        android:id="@+id/switchSentenciaApelacion"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/switchSentenciaApelacion"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp"
+        android:thumbTint="#3498DB"
+        android:trackTint="#555555"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/nExpedienteApelacionField"
-        app:layout_constraintVertical_bias="0.745" />
+        app:layout_constraintTop_toBottomOf="@id/switchPresentadoApelacion"
+        tools:ignore="UseSwitchCompatOrMaterialXml" />
+
+    <Switch
+        android:id="@+id/switchAdmitidoApelacion"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="132dp"
+        android:text="@string/switchAdmitidoApelacion"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp"
+        android:thumbTint="#3498DB"
+        android:trackTint="#555555"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="UseSwitchCompatOrMaterialXml" />
+
+    <Switch
+        android:id="@+id/switchPresentadoApelacion"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/switchPresentadoApelacion"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp"
+        android:thumbTint="#3498DB"
+        android:trackTint="#555555"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/switchAdmitidoApelacion"
+        tools:ignore="UseSwitchCompatOrMaterialXml" />
 
     <Button
         android:id="@+id/guardarApelacionGuardiaButton"
-        android:layout_width="160dp"
+        android:layout_width="0dp"
         android:layout_height="50dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="240dp"
+        android:backgroundTint="#3498DB"
         android:text="@string/guardarApelacionbtn"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:textColor="#FFFFFF"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.9"
-        app:layout_constraintStart_toEndOf="@+id/cancelarApelacionGuardiaButton"
-        app:layout_constraintTop_toBottomOf="@id/nExpedienteApelacionField"
-        app:layout_constraintVertical_bias="0.745" />
+        app:layout_constraintStart_toEndOf="@id/cancelarApelacionGuardiaButton"
+        app:layout_constraintTop_toBottomOf="@id/nExpedienteApelacionField" />
+
+    <Button
+        android:id="@+id/cancelarApelacionGuardiaButton"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="240dp"
+        android:layout_marginEnd="8dp"
+        android:backgroundTint="#555555"
+        android:text="@string/CancelarApelacionbtn"
+        android:textColor="#FFFFFF"
+        app:layout_constraintEnd_toStartOf="@id/guardarApelacionGuardiaButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/nExpedienteApelacionField" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
