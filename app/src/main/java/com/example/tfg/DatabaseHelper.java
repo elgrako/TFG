@@ -11,7 +11,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "tfgDatabase.db";
 
     public DatabaseHelper(@Nullable Context context) {
-        super(context, DATABASE_NAME, null, 6);
+        super(context, DATABASE_NAME, null, 8);
     }
 
     @Override
@@ -68,6 +68,23 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "sentencia INTEGER," +
                 "FOREIGN KEY(guardia_id) REFERENCES Guardia(id) ON DELETE CASCADE)";
         db.execSQL(createApelacionGuardiaTable);
+
+        String createRecursoGuardiaTable = "CREATE TABLE RecursoGuardia (" +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "guardia_id INTEGER," +
+                "nExpediente TEXT," +
+                "resuelto INTEGER," +
+                "FOREIGN KEY(guardia_id) REFERENCES Guardia(id) ON DELETE CASCADE)";
+        db.execSQL(createRecursoGuardiaTable);
+
+        String createRecursoExtraOrdinarioTable = "CREATE TABLE RecursoExtraOrdinario (" +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "guardia_id INTEGER," +
+                "nExpediente INTEGER," +
+                "admitido INTEGER," +
+                "FOREIGN KEY(guardia_id) REFERENCES Guardia(id) ON DELETE CASCADE)";
+        db.execSQL(createRecursoExtraOrdinarioTable);
+
     }
 
 
@@ -77,6 +94,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS Guardia");
         db.execSQL("DROP TABLE IF EXISTS SituacionGuardia");
         db.execSQL("DROP TABLE IF EXISTS ApelacionGuardia");
+        db.execSQL("DROP TABLE IF EXISTS RecursoGuardia");
+        db.execSQL("DROP TABLE IF EXISTS RecursoExtraOrdinario");
 
         onCreate(db);
     }
@@ -195,27 +214,71 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
 
-    public boolean insertarApelacionGuardia(String nExpediente, boolean admitido, boolean presentado, boolean sentencia) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        int a = admitido ? 1 : 0;
-        int p = presentado ? 1 : 0;
-        int s = sentencia ? 1 : 0;
-
-        try {
-            String query = "INSERT INTO ApelacionGuardia (nExpediente, admitido, presentado, sentencia) VALUES (?, ?, ?, ?)";
-            db.execSQL(query, new Object[]{nExpediente, a, p, s});
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        } finally {
-            db.close();
-        }
+    public Cursor obtenerApelacionGuardiaPorId(int guardiaId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        return db.rawQuery("SELECT nExpediente, admitido, presentado, sentencia FROM ApelacionGuardia WHERE guardia_id = ?", new String[]{String.valueOf(guardiaId)});
     }
 
-    public Cursor obtenerApelacionesGuardia() {
+    public boolean insertaroActualizarApelacionGuardia(int guardiaId, String nExpediente, boolean admitido, boolean presentado, boolean sentencia) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM ApelacionGuardia WHERE guardia_id = ?", new String[]{String.valueOf(guardiaId)});
+        boolean exists = cursor.moveToFirst();
+        cursor.close();
+
+        if (exists) {
+            db.execSQL("UPDATE ApelacionGuardia SET nExpediente = ?, admitido = ?, presentado = ?, sentencia = ? WHERE guardia_id = ?",
+                    new Object[]{nExpediente, admitido, presentado, sentencia, guardiaId});
+        } else {
+            db.execSQL("INSERT INTO ApelacionGuardia (guardia_id, nExpediente, admitido, presentado, sentencia) VALUES (?, ?, ?, ?, ?)",
+                    new Object[]{guardiaId, nExpediente, admitido, presentado, sentencia});
+        }
+        return true;
+    }
+
+
+    public Cursor obtenerRecursoPorId(int guardiaId) {
         SQLiteDatabase db = this.getReadableDatabase();
-        return db.rawQuery("SELECT * FROM ApelacionGuardia", null);
+        return db.rawQuery("SELECT nExpediente, resuelto FROM RecursoGuardia WHERE guardia_id = ?", new String[]{String.valueOf(guardiaId)});
+    }
+
+    public boolean insertarActualizarRecursoGuardia(int guardiaId, String nExpediente, int resuelto) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM RecursoGuardia WHERE guardia_id = ?", new String[]{String.valueOf(guardiaId)});
+        boolean exists = cursor.moveToFirst();
+        cursor.close();
+
+        if (exists) {
+            db.execSQL("UPDATE RecursoGuardia SET nExpediente = ?, resuelto = ? WHERE guardia_id = ?",
+                    new Object[]{nExpediente, resuelto, guardiaId});
+        } else {
+            db.execSQL("INSERT INTO RecursoGuardia (guardia_id, nExpediente, resuelto) VALUES (?, ?, ?)",
+                    new Object[]{guardiaId, nExpediente, resuelto});
+        }
+        return true;
+    }
+
+
+    public Cursor obtenerRecursoExtraOrdinarioPorId(int guardiaId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        return db.rawQuery("SELECT nExpediente, admitido FROM RecursoExtraOrdinario WHERE guardia_id = ?",
+                new String[]{String.valueOf(guardiaId)});
+    }
+
+    public boolean insertarActualizarRecursoExtraOrdinario(int guardiaId, int nExpediente, int admitido) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM RecursoExtraOrdinario WHERE guardia_id = ?",
+                new String[]{String.valueOf(guardiaId)});
+        boolean existe = cursor.moveToFirst();
+        cursor.close();
+
+        if (existe) {
+            db.execSQL("UPDATE RecursoExtraOrdinario SET nExpediente = ?, admitido = ? WHERE guardia_id = ?",
+                    new Object[]{nExpediente, admitido, guardiaId});
+        } else {
+            db.execSQL("INSERT INTO RecursoExtraOrdinario (guardia_id, nExpediente, admitido) VALUES (?, ?, ?)",
+                    new Object[]{guardiaId, nExpediente, admitido});
+        }
+        return true;
     }
 
     public boolean borrarJudicialPorNombre(String nombre) {

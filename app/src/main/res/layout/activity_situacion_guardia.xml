@@ -5,134 +5,134 @@
     android:id="@+id/layout_situacion_guardia"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:background="@color/colorBackground">
 
     <EditText
         android:id="@+id/comentariosGuardiaField"
-        android:layout_width="375dp"
-        android:layout_height="176dp"
-        android:layout_marginTop="84dp"
-        android:background="@android:drawable/editbox_background"
-        android:gravity="top|start"
+        android:layout_width="0dp"
+        android:layout_height="140dp"
+        android:layout_marginTop="96dp"
+        android:autofillHints=""
         android:hint="@string/comentarioGuardia"
         android:inputType="textMultiLine"
-        android:maxLines="6"
-        android:minLines="4"
-        android:padding="8dp"
-        android:scrollbars="vertical"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        android:gravity="top|start"
+        android:backgroundTint="@color/colorPrimary"
+        android:textColor="@color/colorTextPrimary"
+        android:textColorHint="@color/colorTextSecondary"
+        android:padding="12dp"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <Switch
         android:id="@+id/switchPresentadoGuardia"
-        android:layout_width="230dp"
-        android:layout_height="60dp"
-        android:layout_marginTop="12dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
         android:text="@string/switchPresentadoGuardia"
-        android:textColor="#D7585858"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.496"
+        android:textColor="@color/colorTextPrimary"
+        android:textSize="18sp"
+        android:paddingStart="8dp"
+        app:layout_constraintTop_toBottomOf="@id/comentariosGuardiaField"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/comentariosGuardiaField"
-        tools:ignore="UseSwitchCompatOrMaterialXml" />
-
-    <Switch
-        android:id="@+id/switchPagadoGuardia"
-        android:layout_width="230dp"
-        android:layout_height="60dp"
-        android:layout_marginTop="16dp"
-        android:text="@string/switchPagadoGuardia"
-        android:textColor="#D7585858"
-        android:textSize="20sp"
-        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.496"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/switchValidadoGuardia"
-        tools:ignore="UseSwitchCompatOrMaterialXml" />
+        tools:ignore="RtlSymmetry,UseSwitchCompatOrMaterialXml" />
 
     <Switch
         android:id="@+id/switchValidadoGuardia"
-        android:layout_width="230dp"
-        android:layout_height="60dp"
-        android:layout_marginTop="16dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
         android:text="@string/switchValidadoGuardia"
-        android:textColor="#D7585858"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.496"
+        android:textColor="@color/colorTextPrimary"
+        android:textSize="18sp"
+        android:paddingStart="8dp"
+        app:layout_constraintTop_toBottomOf="@id/switchPresentadoGuardia"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/switchPresentadoGuardia"
-        tools:ignore="UseSwitchCompatOrMaterialXml" />
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:ignore="RtlSymmetry,UseSwitchCompatOrMaterialXml" />
+
+    <Switch
+        android:id="@+id/switchPagadoGuardia"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:text="@string/switchPagadoGuardia"
+        android:textColor="@color/colorTextPrimary"
+        android:textSize="18sp"
+        android:paddingStart="8dp"
+        app:layout_constraintTop_toBottomOf="@id/switchValidadoGuardia"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:ignore="RtlSymmetry,UseSwitchCompatOrMaterialXml" />
 
     <EditText
         android:id="@+id/nTalonGuardiaField"
-        android:layout_width="340dp"
+        android:layout_width="0dp"
         android:layout_height="50dp"
-        android:layout_marginTop="16dp"
-        android:background="@android:drawable/editbox_background"
+        android:layout_marginTop="24dp"
         android:hint="@string/nTalonGuardia"
         android:inputType="number"
-        android:padding="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.487"
+        android:backgroundTint="@color/colorPrimary"
+        android:textColor="@color/colorTextPrimary"
+        android:textColorHint="@color/colorTextSecondary"
+        android:padding="10dp"
+        app:layout_constraintTop_toBottomOf="@id/switchPagadoGuardia"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/switchPagadoGuardia" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <EditText
         android:id="@+id/eurosGuardiaField"
-        android:layout_width="340dp"
+        android:layout_width="0dp"
         android:layout_height="50dp"
-        android:layout_marginTop="24dp"
-        android:background="@android:drawable/editbox_background"
+        android:layout_marginTop="16dp"
         android:hint="@string/eurosGuardia"
         android:inputType="numberDecimal"
-        android:padding="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.512"
+        android:backgroundTint="@color/colorPrimary"
+        android:textColor="@color/colorTextPrimary"
+        android:textColorHint="@color/colorTextSecondary"
+        android:padding="10dp"
+        app:layout_constraintTop_toBottomOf="@id/nTalonGuardiaField"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/nTalonGuardiaField" />
-
-    <Button
-        android:id="@+id/guardarSituacionGuardiaButton"
-        android:layout_width="160dp"
-        android:layout_height="50dp"
-        android:text="@string/guardarGuardiaBtn"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.91"
-        app:layout_constraintStart_toEndOf="@+id/cancelarSituacionGuardiaButton"
-        app:layout_constraintTop_toBottomOf="@+id/eurosGuardiaField"
-        app:layout_constraintVertical_bias="1.0" />
-
-    <Button
-        android:id="@+id/cancelarSituacionGuardiaButton"
-        android:layout_width="160dp"
-        android:layout_height="50dp"
-        android:text="@string/cancelarSituacionBtn"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/guardarSituacionGuardiaButton"
-        app:layout_constraintHorizontal_bias="0.09"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/eurosGuardiaField"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <Button
         android:id="@+id/btnIrApelacion"
-        android:layout_width="140dp"
-        android:layout_height="38dp"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="32dp"
+        android:backgroundTint="@color/colorSecondaryVariant"
         android:text="@string/irApelacionBtn"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.983"
+        android:textColor="@color/colorOnPrimary"
+        app:layout_constraintTop_toBottomOf="@id/eurosGuardiaField"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.057" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
+    <Button
+        android:id="@+id/guardarSituacionGuardiaButton"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginBottom="32dp"
+        android:backgroundTint="@color/colorPrimary"
+        android:text="@string/guardarGuardiaBtn"
+        android:textColor="@color/colorOnPrimary"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/cancelarSituacionGuardiaButton"
+        app:layout_constraintWidth_percent="0.48" />
+
+    <Button
+        android:id="@+id/cancelarSituacionGuardiaButton"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginBottom="32dp"
+        android:backgroundTint="@color/colorSecondary"
+        android:text="@string/cancelarSituacionBtn"
+        android:textColor="@color/colorOnPrimary"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@id/guardarSituacionGuardiaButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintWidth_percent="0.48" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

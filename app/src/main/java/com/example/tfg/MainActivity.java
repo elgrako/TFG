@@ -179,10 +179,14 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.menu_logout) {
+        int id = item.getItemId();
+        if (id == R.id.menu_logout) {
             PreferenciasHelper.cerrarSesion(this);
             startActivity(new Intent(this, LoginActivity.class));
             finish();
+            return true;
+        } else if (id == R.id.menu_multimedia) {
+            startActivity(new Intent(this, MultimediaActivity.class));
             return true;
         }
         return super.onOptionsItemSelected(item);

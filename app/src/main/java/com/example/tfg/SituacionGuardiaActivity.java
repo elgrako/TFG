@@ -26,7 +26,6 @@ public class SituacionGuardiaActivity extends AppCompatActivity {
         setContentView(R.layout.activity_situacion_guardia);
 
         dbh = new DatabaseHelper(this);
-        nh = new NotificationHelper();
 
         comentariosField = findViewById(R.id.comentariosGuardiaField);
         nTalonField = findViewById(R.id.nTalonGuardiaField);
@@ -86,10 +85,8 @@ public class SituacionGuardiaActivity extends AppCompatActivity {
 
             boolean ok = dbh.insertarSituacionGuardiaPorId(guardiaId, comentarios, nTalon, euros, presentado, validado, pagado);
             if (ok) {
-                nh.Notification(this, "Situación guardada", "Se actualizó la situación de la guardia");
+                NotificationHelper.Notification(this, "Situación guardada", "Se actualizó la situación de la guardia");
                 finish();
-            } else {
-                ToastHelper.error(this, "Error al guardar situación");
             }
         });
 

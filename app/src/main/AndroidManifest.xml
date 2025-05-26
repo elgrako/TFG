@@ -15,6 +15,15 @@
         android:theme="@style/Theme.AppCompat.DayNight.DarkActionBar"
         tools:targetApi="31">
         <activity
+            android:name=".MultimediaActivity"
+            android:exported="false" />
+        <activity
+            android:name=".RecursoExtraOrdinarioActivity"
+            android:exported="false" />
+        <activity
+            android:name=".RecursoGuardiaActivity"
+            android:exported="false" />
+        <activity
             android:name=".ApelacionGuardiaActivity"
             android:exported="false" />
         <activity

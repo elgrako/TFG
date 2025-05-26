@@ -68,9 +68,16 @@
     <string name="cancelarSituacionBtn">Cancel</string>
     <string name="irApelacionBtn">Go to Appeal</string>
 
+
+    <string name="nExpedienteRecursoExtra">Nº Expedient Extraordinary Resource </string>
+    <string name="nExpedienteRecurso">Nº Expedient Resource</string>
+    <string name="irRecursoExtra">Go to Extraordinary Resource</string>
+
     <!--Contextual-->
     <string name="borrarContextual">Delete</string>
     <string name="EditContextual">Edit</string>
     <string name="EditGuardiaContextual">Edit Guard</string>
     <string name="borrarGuardiaContextual">Delete Guard</string>
+    <string name="logout">Logout</string>
+    <string name="media">Multi-media</string>
 </resources>

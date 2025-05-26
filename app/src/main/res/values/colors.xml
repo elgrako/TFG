@@ -1,19 +1,16 @@
 <resources>
-    <!-- BRAND COLORS -->
     <color name="colorPrimary">#4AA9E0</color>
     <color name="colorPrimaryVariant">#2D6FA6</color>
     <color name="colorSecondary">#2D6FA6</color>
+    <color name="colorSecondaryVariant">#0C3E5A</color>
     <color name="colorOnPrimary">#FFFFFF</color>
 
-    <!-- SURFACE / BACKGROUND -->
     <color name="colorSurface">#1A1A1A</color>
     <color name="colorBackground">#000000</color>
 
-    <!-- TEXT -->
     <color name="colorTextPrimary">#FFFFFF</color>
     <color name="colorTextSecondary">#CCCCCC</color>
 
-    <!-- OTHERS -->
     <color name="colorError">#EF5350</color>
     <color name="colorSuccess">#66BB6A</color>
 </resources>
