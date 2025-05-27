@@ -100,31 +100,31 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public boolean insertarOActualizarDatosEdit(Datos datos) {
+    public boolean insertarOActualizarDatosEdit(Registro registro) {
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery("SELECT nombre FROM Datos WHERE nombre = ?", new String[]{datos.getNombre()});
+        Cursor cursor = db.rawQuery("SELECT nombre FROM Datos WHERE nombre = ?", new String[]{registro.getNombre()});
         boolean existe = (cursor != null && cursor.moveToFirst());
         cursor.close();
 
         if (existe) {
             String query = "UPDATE Datos SET dni = ?, nExpediente = ?, euros = ?, email = ?, telefono = ? WHERE nombre = ?";
             db.execSQL(query, new Object[]{
-                    datos.getDni(),
-                    datos.getnExpediente(),
-                    datos.getEuros(),
-                    datos.getEmail(),
-                    datos.getTelefono(),
-                    datos.getNombre()
+                    registro.getDni(),
+                    registro.getnExpediente(),
+                    registro.getEuros(),
+                    registro.getEmail(),
+                    registro.getTelefono(),
+                    registro.getNombre()
             });
         } else {
             String query = "INSERT INTO Datos (nombre, dni, nExpediente, euros, email, telefono) VALUES (?, ?, ?, ?, ?, ?)";
             db.execSQL(query, new Object[]{
-                    datos.getNombre(),
-                    datos.getDni(),
-                    datos.getnExpediente(),
-                    datos.getEuros(),
-                    datos.getEmail(),
-                    datos.getTelefono()
+                    registro.getNombre(),
+                    registro.getDni(),
+                    registro.getnExpediente(),
+                    registro.getEuros(),
+                    registro.getEmail(),
+                    registro.getTelefono()
             });
         }
         return true;

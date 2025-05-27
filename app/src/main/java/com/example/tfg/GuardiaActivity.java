@@ -7,15 +7,23 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.DatePickerDialog;
+
+import com.example.tfg.api.RetrofitClient;
+import com.example.tfg.api.ApiService;
+import com.example.tfg.Guardia;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class GuardiaActivity extends AppCompatActivity {
 
@@ -23,8 +31,8 @@ public class GuardiaActivity extends AppCompatActivity {
     EditText nombreAsistidoField;
     Switch porJuzgadoSwitch, cobradoSwitch;
     Button guardarButton;
-    DatabaseHelper dbh;
     NotificationHelper nh;
+    private ApiService apiService;
 
     private Date selectedDate;
     private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
@@ -34,7 +42,7 @@ public class GuardiaActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_guardia);
 
-        dbh = new DatabaseHelper(this);
+        apiService = RetrofitClient.getInstance().getApi();
         nh = new NotificationHelper();
 
         diaField = findViewById(R.id.diaActuacionField);
@@ -70,30 +78,48 @@ public class GuardiaActivity extends AppCompatActivity {
         cobradoSwitch.setOnCheckedChangeListener((buttonView, isChecked) ->
                 actualizarEstadoSwitch(cobradoSwitch, isChecked, "Cobrado", "No cobrado"));
 
-        guardarButton.setOnClickListener(v -> {
-            String nombre = nombreAsistidoField.getText().toString().trim();
-            boolean juzgado = porJuzgadoSwitch.isChecked();
-            boolean cobrado = cobradoSwitch.isChecked();
+        guardarButton.setOnClickListener(v -> guardarGuardia());
+    }
 
-            if (nombre.isEmpty()) {
-                ToastHelper.info(this, "Introduce el nombre del asistido");
-                return;
+    private void guardarGuardia() {
+        String nombre = nombreAsistidoField.getText().toString().trim();
+        boolean juzgado = porJuzgadoSwitch.isChecked();
+        boolean cobrado = cobradoSwitch.isChecked();
+
+        if (nombre.isEmpty()) {
+            ToastHelper.info(this, "Introduce el nombre del asistido");
+            return;
+        }
+
+        String diaActuacion = sdf.format(selectedDate);
+        Guardia guardia = new Guardia();
+        guardia.setNombreAsistido(nombre);
+        guardia.setDiaActuacion(diaActuacion);
+        guardia.setPorJuzgado(juzgado);
+        guardia.setCobrado(cobrado);
+
+        apiService.createGuardia(guardia).enqueue(new Callback<Guardia>() {
+            @Override
+            public void onResponse(Call<Guardia> call, Response<Guardia> response) {
+                if (response.isSuccessful()) {
+                    nh.Notification(GuardiaActivity.this, "Guardia registrada",
+                            "Guardia guardada correctamente para " + nombre);
+                    Intent intent = new Intent(GuardiaActivity.this, SituacionGuardiaActivity.class);
+                    intent.putExtra("nombreAsistido", nombre);
+                    startActivity(intent);
+                    finish();
+                } else {
+                    ToastHelper.error(GuardiaActivity.this, "Error al guardar la guardia");
+                }
             }
 
-            String diaActuacion = sdf.format(selectedDate);
-            boolean insertado = dbh.insertarGuardia(nombre, diaActuacion, juzgado, cobrado);
-
-            if (insertado) {
-                nh.Notification(this, "Guardia registrada", "Guardia guardada correctamente para " + nombre);
-                Intent intent = new Intent(this, SituacionGuardiaActivity.class);
-                intent.putExtra("nombreAsistido", nombre);
-                startActivity(intent);
-                finish();
-            } else {
-                ToastHelper.error(this, "Error al guardar la guardia");
+            @Override
+            public void onFailure(Call<Guardia> call, Throwable t) {
+                ToastHelper.error(GuardiaActivity.this, "Fallo de red: " + t.getMessage());
             }
         });
     }
+
     private void actualizarEstadoSwitch(Switch s, boolean check, String TextYes, String TextNo) {
         s.setChecked(check);
         if (check) {

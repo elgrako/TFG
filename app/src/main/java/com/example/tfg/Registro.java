@@ -1,6 +1,9 @@
 package com.example.tfg;
 
-public class Datos {
+import java.io.Serializable;
+
+public class Registro implements Serializable {
+    private Long id;
     private String nombre;
     private String dni;
     private String nExpediente;
@@ -8,7 +11,8 @@ public class Datos {
     private String email;
     private int telefono;
 
-    public Datos(String nombre, String dni, String nExpediente, double euros, String email, int telefono) {
+    public Registro(Long id, String nombre, String dni, String nExpediente, double euros, String email, int telefono) {
+        this.id = id;
         this.nombre = nombre;
         this.dni = dni;
         this.nExpediente = nExpediente;
@@ -17,16 +21,24 @@ public class Datos {
         this.telefono = telefono;
     }
 
-    public Datos() {
+    public Registro() {
     }
 
-    public Datos(String nombre, String dni, String nExpediente, double euros) {
+    public Registro(String nombre, String dni, String nExpediente, double euros) {
         this.nombre = nombre;
         this.dni = dni;
         this.nExpediente = nExpediente;
         this.euros = euros;
         this.email = "";
         this.telefono = 0;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getNombre() {

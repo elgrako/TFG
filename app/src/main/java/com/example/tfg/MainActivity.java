@@ -2,42 +2,41 @@ package com.example.tfg;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.ContextMenu;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.*;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.tfg.api.RetrofitClient;
+import com.example.tfg.Registro;
+
 import java.util.ArrayList;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
-    DatabaseHelper dbh;
+
     ListView listViewDatos;
-    ArrayList<Datos> listaDatos;
-    ArrayAdapter<Datos> adapter;
-    NotificationHelper nh;
+    ArrayList<Registro> listaDatos;
+    RegistroAdapter adapter;
+    Registro registroSeleccionado;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        nh = new NotificationHelper();
-
-        dbh = new DatabaseHelper(this);
         listViewDatos = findViewById(R.id.listaDatosMain);
         listaDatos = new ArrayList<>();
 
@@ -55,19 +54,19 @@ public class MainActivity extends AppCompatActivity {
             verJudiciales.setTextColor(Color.DKGRAY);
         });
 
-        LayoutInflater inflater = getLayoutInflater();
-        View headerView = inflater.inflate(R.layout.header_datos, listViewDatos, false);
-        listViewDatos.addHeaderView(headerView);
-
         Button newButton = findViewById(R.id.newJudicialButton);
         registerForContextMenu(listViewDatos);
-
-        cargarDatos();
 
         newButton.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, EditActivity.class);
             startActivity(intent);
         });
+
+        listViewDatos.setOnItemClickListener((parent, view, position, id) -> {
+            registroSeleccionado = listaDatos.get(position);
+        });
+
+        cargarDatos();
     }
 
     @Override
@@ -77,22 +76,33 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void cargarDatos() {
-        listaDatos.clear();
-        Cursor cursor = dbh.obtenerDatosMain();
-        if (cursor != null && cursor.moveToFirst()) {
-            do {
-                @SuppressLint("Range") String nombre = cursor.getString(cursor.getColumnIndex("nombre"));
-                @SuppressLint("Range") String dni = cursor.getString(cursor.getColumnIndex("dni"));
-                @SuppressLint("Range") String nExpediente = cursor.getString(cursor.getColumnIndex("nExpediente"));
-                @SuppressLint("Range") double euros = cursor.getDouble(cursor.getColumnIndex("euros"));
-                listaDatos.add(new Datos(nombre, dni, nExpediente, euros));
-            } while (cursor.moveToNext());
-            cursor.close();
-        }
+        RetrofitClient.getInstance().getApi().getAllRegistros()
+                .enqueue(new Callback<List<Registro>>() {
+                    @Override
+                    public void onResponse(Call<List<Registro>> call, Response<List<Registro>> response) {
+                        if (response.isSuccessful()) {
+                            listaDatos.clear();
+                            listaDatos.addAll(response.body());
 
-        adapter = new DatosAdapter(this, listaDatos);
-        listViewDatos.setAdapter(adapter);
+                            if (adapter == null) {
+                                adapter = new RegistroAdapter(MainActivity.this, listaDatos);
+                                listViewDatos.setAdapter(adapter);
+                            } else {
+                                adapter.notifyDataSetChanged();
+                            }
+                        } else {
+                            ToastHelper.error(MainActivity.this, "Error al obtener datos");
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<List<Registro>> call, Throwable th) {
+                        ToastHelper.error(MainActivity.this, "Fallo de red: " + th.getMessage());
+                    }
+                });
     }
+
+
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
@@ -101,74 +111,61 @@ public class MainActivity extends AppCompatActivity {
         inflater.inflate(R.menu.main_context, menu);
     }
 
-
-    @SuppressLint("Range")
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        Datos datosSeleccionado = listaDatos.get(info.position - 1);
-
-        Cursor cursor = dbh.getExtrasByNombre(datosSeleccionado.getNombre());
-
-        String email = "";
-        int telefono = 0;
-
-        if (cursor != null && cursor.moveToFirst()) {
-            email = cursor.getString(cursor.getColumnIndex("email"));
-            telefono = cursor.getInt(cursor.getColumnIndex("telefono"));
-            cursor.close();
-        }
+        registroSeleccionado = listaDatos.get(info.position - 1);
 
         int id = item.getItemId();
 
         if (id == R.id.edit_context) {
             Intent intent = new Intent(MainActivity.this, EditActivity.class);
-            intent.putExtra("nombre", datosSeleccionado.getNombre());
-            intent.putExtra("dni", datosSeleccionado.getDni());
-            intent.putExtra("nExpediente", datosSeleccionado.getnExpediente());
-            intent.putExtra("euros", datosSeleccionado.getEuros());
-            intent.putExtra("email", email);
-            intent.putExtra("telefono", telefono);
+            intent.putExtra("registro", registroSeleccionado);
             startActivity(intent);
             return true;
-
         } else if (id == R.id.correo_context) {
+            String email = registroSeleccionado.getEmail();
             if (email != null && !email.isEmpty()) {
                 Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
                 emailIntent.setData(Uri.parse("mailto:" + email));
-                emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Consulta sobre el expediente");
+                emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Consulta sobre expediente");
                 startActivity(Intent.createChooser(emailIntent, "Enviar email"));
             } else {
                 ToastHelper.info(this, "No hay correo asignado");
             }
             return true;
-
         } else if (id == R.id.telefono_context) {
+            int telefono = registroSeleccionado.getTelefono();
             if (telefono != 0) {
                 Intent callIntent = new Intent(Intent.ACTION_DIAL);
                 callIntent.setData(Uri.parse("tel:" + telefono));
                 startActivity(callIntent);
             } else {
-                ToastHelper.info(this, "No hay número de teléfono asignado");
+                ToastHelper.error(this, "No hay número de teléfono asignado");
             }
             return true;
-        } else if (item.getItemId() == R.id.delete_context) {
-            boolean deleted = dbh.borrarJudicialPorNombre(datosSeleccionado.getNombre());
-            if (deleted) {
-                nh.Notification(
-                        this,
-                        "Judicial eliminado",
-                        "Se ha eliminado el registro de " + datosSeleccionado.getNombre()
-                );
-                cargarDatos();
-            } else {
-                ToastHelper.error(this, "Error al eliminar");
-            }
+        } else if (id == R.id.delete_context) {
+            eliminarRegistro(registroSeleccionado.getId());
             return true;
         }
 
-
         return super.onContextItemSelected(item);
+    }
+
+
+    private void eliminarRegistro(Long id) {
+        RetrofitClient.getInstance().getApi().deleteRegistro(id).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                ToastHelper.info(MainActivity.this, "Registro eliminado");
+                cargarDatos();
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                ToastHelper.error(MainActivity.this, "Error al eliminar");
+            }
+        });
     }
 
     @Override
@@ -179,13 +176,12 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.menu_logout) {
+        if (item.getItemId() == R.id.menu_logout) {
             PreferenciasHelper.cerrarSesion(this);
             startActivity(new Intent(this, LoginActivity.class));
             finish();
             return true;
-        } else if (id == R.id.menu_multimedia) {
+        } else if (item.getItemId() == R.id.menu_multimedia) {
             startActivity(new Intent(this, MultimediaActivity.class));
             return true;
         }

@@ -15,6 +15,9 @@ public class Guardia {
         this.cobrado = cobrado;
     }
 
+    public Guardia() {
+    }
+
     public int getId() {
         return id;
     }

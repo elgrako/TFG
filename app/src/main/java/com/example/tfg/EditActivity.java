@@ -4,21 +4,29 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.tfg.api.RetrofitClient;
+import com.example.tfg.api.ApiService;
+import com.example.tfg.Registro;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class EditActivity extends AppCompatActivity {
-    DatabaseHelper dbh;
     EditText nameField, dniField, nExpedienteField, eurosField, emailField, telefonoField;
     Button okButton, cancelButton;
-    String nombre;
+    Registro registroExistente;
+    private ApiService apiService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit);
 
-        dbh = new DatabaseHelper(this);
+        apiService = RetrofitClient.getInstance().getApi();
 
         nameField = findViewById(R.id.nameEditField);
         dniField = findViewById(R.id.dniEditField);
@@ -30,35 +38,20 @@ public class EditActivity extends AppCompatActivity {
         okButton = findViewById(R.id.nextEditButton);
         cancelButton = findViewById(R.id.backEditButton);
 
-        nombre = getIntent().getStringExtra("nombre");
+        // Obtener el registro si estamos editando
+        registroExistente = (Registro) getIntent().getSerializableExtra("registro");
 
-        if (nombre != null) {
-            nameField.setText(nombre);
-
-            dniField.setText(getIntent().getStringExtra("dni"));
-            nExpedienteField.setText(getIntent().getStringExtra("nExpediente"));
-            emailField.setText(getIntent().getStringExtra("email"));
-
-            if (getIntent().hasExtra("euros")) {
-                double euros = getIntent().getDoubleExtra("euros", 0.0);
-                eurosField.setText(String.valueOf(euros));
-            }
-            if (getIntent().hasExtra("telefono")) {
-                int telefono = getIntent().getIntExtra("telefono", 0);
-                telefonoField.setText(String.valueOf(telefono));
-            }
+        if (registroExistente != null) {
+            // Rellenar campos con los datos existentes
+            nameField.setText(registroExistente.getNombre());
+            dniField.setText(registroExistente.getDni());
+            nExpedienteField.setText(registroExistente.getnExpediente());
+            emailField.setText(registroExistente.getEmail());
+            eurosField.setText(String.valueOf(registroExistente.getEuros()));
+            telefonoField.setText(String.valueOf(registroExistente.getTelefono()));
         }
 
-        okButton.setOnClickListener(v -> {
-            guardarDatos();
-            double euros = Double.parseDouble(eurosField.getText().toString().trim());
-
-            Intent okIntent = new Intent(this, Situacion1Activity.class);
-            okIntent.putExtra("nombre", nombre);
-            okIntent.putExtra("euros", euros);
-            startActivity(okIntent);
-            finish();
-        });
+        okButton.setOnClickListener(v -> guardarRegistro());
 
         cancelButton.setOnClickListener(v -> {
             startActivity(new Intent(this, MainActivity.class));
@@ -66,15 +59,15 @@ public class EditActivity extends AppCompatActivity {
         });
     }
 
-    private void guardarDatos() {
-        String nombreInput = nameField.getText().toString().trim();
+    private void guardarRegistro() {
+        String nombre = nameField.getText().toString().trim();
         String dni = dniField.getText().toString().trim();
         String nExpediente = nExpedienteField.getText().toString().trim();
         String email = emailField.getText().toString().trim();
         String eurosStr = eurosField.getText().toString().trim();
         String telefonoStr = telefonoField.getText().toString().trim();
 
-        if (nombreInput.isEmpty() || dni.isEmpty() || nExpediente.isEmpty() || eurosStr.isEmpty() || telefonoStr.isEmpty()) {
+        if (nombre.isEmpty() || dni.isEmpty() || nExpediente.isEmpty() || eurosStr.isEmpty() || telefonoStr.isEmpty()) {
             ToastHelper.error(this, "Completa todos los campos");
             return;
         }
@@ -86,17 +79,83 @@ public class EditActivity extends AppCompatActivity {
             euros = Double.parseDouble(eurosStr);
             telefono = Integer.parseInt(telefonoStr);
         } catch (NumberFormatException e) {
-            ToastHelper.error(this, "Formato incorrecto");
+            ToastHelper.error(this, "Formato incorrecto en números");
             return;
         }
 
-        if (nombre == null) {
-            nombre = nombreInput;
+        // Crear el registro con ID si existe
+        Registro registro;
+        if (registroExistente != null) {
+            registro = new Registro(
+                    registroExistente.getId(),
+                    nombre,
+                    dni,
+                    nExpediente,
+                    euros,
+                    email,
+                    telefono
+            );
+        } else {
+            // Para nuevo registro, primero creamos sin ID (el servidor lo asignará)
+            registro = new Registro();
+            registro.setNombre(nombre);
+            registro.setDni(dni);
+            registro.setnExpediente(nExpediente);
+            registro.setEuros(euros);
+            registro.setEmail(email);
+            registro.setTelefono(telefono);
         }
 
-        Datos datos = new Datos(nombre, dni, nExpediente, euros, email, telefono);
-        dbh.insertarOActualizarDatosEdit(datos);
-        ToastHelper.info(this, "Datos guardados");
+        if (registroExistente != null) {
+            actualizarRegistro(registro);
+        } else {
+            crearRegistro(registro);
+        }
     }
 
+    private void crearRegistro(Registro registro) {
+        apiService.createRegistro(registro).enqueue(new Callback<Registro>() {
+            @Override
+            public void onResponse(Call<Registro> call, Response<Registro> response) {
+                if (response.isSuccessful()) {
+                    ToastHelper.info(EditActivity.this, "Registro creado");
+                    irSituacion1(registro.getNombre(), registro.getEuros());
+                } else {
+                    ToastHelper.error(EditActivity.this, "Error al crear registro");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Registro> call, Throwable t) {
+                ToastHelper.error(EditActivity.this, "Fallo de red: " + t.getMessage());
+            }
+        });
+    }
+
+    private void actualizarRegistro(Registro registro) {
+        apiService.updateRegistro(registro.getId(), registro).enqueue(new Callback<Registro>() {
+            @Override
+            public void onResponse(Call<Registro> call, Response<Registro> response) {
+                if (response.isSuccessful()) {
+                    ToastHelper.info(EditActivity.this, "Registro actualizado");
+                    irSituacion1(registro.getNombre(), registro.getEuros());
+                } else {
+                    ToastHelper.error(EditActivity.this, "Error al actualizar registro");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Registro> call, Throwable t) {
+                ToastHelper.error(EditActivity.this, "Fallo de red: " + t.getMessage());
+            }
+        });
+    }
+
+    private void irSituacion1(String nombre, double euros) {
+        Intent intent = new Intent(this, Situacion1Activity.class);
+        intent.putExtra("nombre", nombre);
+        intent.putExtra("euros", euros);
+        startActivity(intent);
+        finish();
+    }
 }
