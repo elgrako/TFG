@@ -6,21 +6,28 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+
+import okhttp3.*;
+
 public class LoginActivity extends AppCompatActivity {
+
     EditText userField, passField;
     Button loginButton, registerButton;
-    DatabaseHelper dbh;
+    final String API_URL = "http://10.0.2.2:8080/auth/login"; //cambiar esto
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        if (PreferenciasHelper.SesionIniciada(this)) {
+        if (PreferenciasHelper.sesionIniciada(this)) {
             startActivity(new Intent(this, MainActivity.class));
             finish();
         }
@@ -29,19 +36,70 @@ public class LoginActivity extends AppCompatActivity {
         passField = findViewById(R.id.loginPassField);
         loginButton = findViewById(R.id.loginButton);
         registerButton = findViewById(R.id.registerButton);
-        dbh = new DatabaseHelper(this);
 
         loginButton.setOnClickListener(v -> {
             String user = userField.getText().toString().trim();
             String pass = passField.getText().toString().trim();
 
-            if (dbh.checkLogin(user, pass)) {
-                savePreferences(user);
-                PreferenciasHelper.guardarUsuario(this, user);
-                startActivity(new Intent(this, MainActivity.class));
-                finish();
-            } else {
-                ToastHelper.error(this, "Credenciales incorrectas");
+            if (user.isEmpty() || pass.isEmpty()) {
+                ToastHelper.info(this, "Rellena todos los campos");
+                return;
+            }
+
+            try {
+                JSONObject json = new JSONObject();
+                json.put("username", user);
+                json.put("password", pass);
+
+                RequestBody body = RequestBody.create(
+                        json.toString(),
+                        MediaType.parse("application/json")
+                );
+
+                Request request = new Request.Builder()
+                        .url(API_URL)
+                        .post(body)
+                        .build();
+
+                OkHttpClient client = new OkHttpClient();
+
+                client.newCall(request).enqueue(new Callback() {
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+                        runOnUiThread(() -> ToastHelper.error(LoginActivity.this, "Error de conexión"));
+                    }
+
+                    @Override
+                    public void onResponse(Call call, Response response) throws IOException {
+                        if (response.isSuccessful()) {
+                            String responseBody = response.body().string();
+                            JSONObject responseJson = null;
+                            try {
+                                responseJson = new JSONObject(responseBody);
+                            } catch (JSONException e) {
+                                throw new RuntimeException(e);
+                            }
+                            String token = null;
+                            try {
+                                token = responseJson.getString("token");
+                            } catch (JSONException e) {
+                                throw new RuntimeException(e);
+                            }
+
+                            saveToken(user, token);
+                            runOnUiThread(() -> {
+                                PreferenciasHelper.guardarUsuario(LoginActivity.this, user);
+                                startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                                finish();
+                            });
+                        } else {
+                            runOnUiThread(() -> ToastHelper.error(LoginActivity.this, "Credenciales inválidas"));
+                        }
+                    }
+                });
+
+            } catch (Exception e) {
+                ToastHelper.error(this, "Error en datos de login");
             }
         });
 
@@ -49,13 +107,13 @@ public class LoginActivity extends AppCompatActivity {
             startActivity(new Intent(this, RegisterActivity.class));
             finish();
         });
-
     }
 
-    private void savePreferences(String username) {
+    private void saveToken(String username, String token) {
         SharedPreferences prefs = getSharedPreferences("misPreferencias", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("usuario", username);
+        editor.putString("token", token);
         editor.apply();
     }
 }

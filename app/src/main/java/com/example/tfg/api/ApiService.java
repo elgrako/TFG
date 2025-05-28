@@ -1,7 +1,11 @@
 package com.example.tfg.api;
 
+import com.example.tfg.ApelacionGuardia;
 import com.example.tfg.Guardia;
+import com.example.tfg.RecursoExtraOrdinario;
+import com.example.tfg.RecursoGuardia;
 import com.example.tfg.Registro;
+import com.example.tfg.SituacionGuardia;
 import com.example.tfg.Usuario;
 
 import java.util.List;
@@ -28,6 +32,15 @@ public interface ApiService {
 
     @DELETE("registro/borrarRegistro/{id}")
     Call<Void> deleteRegistro(@Path("id") Long id);
+
+    @PATCH("registro/{id}/situacion1")
+    Call<Void> updateSituacion1(
+            @Path("id") Long id,
+            @Query("presentado") boolean presentado,
+            @Query("validado") boolean validado,
+            @Query("pagado") boolean pagado,
+            @Query("nTalon") Integer nTalon,
+            @Query("comentarios") String comentarios);
 
     // USUARIO
 
@@ -74,4 +87,47 @@ public interface ApiService {
 
     @GET("guardias/por-cobrado/{cobrado}")
     Call<List<Guardia>> getGuardiasPorCobrado(@Path("cobrado") boolean cobrado);
+
+    // SITUACION GUARDIA
+    @GET("situaciones-guardia/guardia/{guardiaId}")
+    Call<SituacionGuardia> getByGuardiaId(@Path("guardiaId") Long guardiaId);
+
+    @PUT("situaciones-guardia/{id}")
+    Call<SituacionGuardia> updateSituacionGuardia(@Path("id") Long id, @Body SituacionGuardia situacionGuardia);
+
+
+    // APELACIONES GUARDIA
+
+    @GET("apelaciones/guardia/{guardiaId}")
+    Call<ApelacionGuardia> getApelacionByGuardiaId(@Path("guardiaId") Long guardiaId);
+
+    @POST("apelaciones")
+    Call<ApelacionGuardia> createApelacion(@Body ApelacionGuardia apelacion);
+
+    @PUT("apelaciones/{id}")
+    Call<ApelacionGuardia> updateApelacion(@Path("id") Long id, @Body ApelacionGuardia apelacion);
+
+    // RECURSO GUARDIA
+    @GET("recurso-guardia/guardia/{guardiaId}")
+    Call<RecursoGuardia> getRecursoGuardiaByGuardiaId(@Path("guardiaId") Long guardiaId);
+
+    @POST("recurso-guardia")
+    Call<RecursoGuardia> createRecursoGuardia(@Body RecursoGuardia recurso);
+
+    @PUT("recurso-guardia/{id}")
+    Call<RecursoGuardia> updateRecursoGuardia(@Path("id") Long id, @Body RecursoGuardia recurso);
+
+
+    // RECURSO EXTRAORDINARIO
+
+    @GET("recurso-extraordinario/guardia/{guardiaId}")
+    Call<RecursoExtraOrdinario> getRecursoExtraByGuardiaId(@Path("guardiaId") Long guardiaId);
+
+    @POST("recurso-extraordinario")
+    Call<RecursoExtraOrdinario> createRecursoExtra(@Body RecursoExtraOrdinario recurso);
+
+    @PUT("recurso-extraordinario/{id}")
+    Call<RecursoExtraOrdinario> updateRecursoExtra(@Path("id") Long id, @Body RecursoExtraOrdinario recurso);
+
+
 }

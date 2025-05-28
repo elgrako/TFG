@@ -1,24 +1,31 @@
 package com.example.tfg;
 
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Switch;
-import android.widget.TextView;
-import android.widget.Toast;
-
+import android.widget.*;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.tfg.api.ApiService;
+import com.example.tfg.api.RetrofitClient;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import java.text.NumberFormat;
 import java.util.Currency;
 
 public class Situacion1Activity extends AppCompatActivity {
     NotificationHelper nh;
-    DatabaseHelper dbh;
+    ApiService apiService;
+
+    EditText Coments1Sit, NTalon1Sit;
+    Switch Pendiente1Sit, Validado1Sit, Pagado1Sit;
+    TextView euros1Sit;
+
+    Registro registro;
+    Long registroId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,104 +34,106 @@ public class Situacion1Activity extends AppCompatActivity {
         setContentView(R.layout.activity_situacion1);
 
         nh = new NotificationHelper();
+        apiService = RetrofitClient.getInstance().getApi();
 
         Button finishButton = findViewById(R.id.next1SitButton);
         Button cancelButton = findViewById(R.id.cancel1SitButton);
-        EditText Coments1Sit = findViewById(R.id.Coments1Sit);
-        EditText NTalon1Sit = findViewById(R.id.NTalon1Sit);
-        Switch Pendiente1Sit = findViewById(R.id.switchPendiente1Sit);
-        Switch Validado1Sit = findViewById(R.id.switchValidado1Sit);
-        Switch Pagado1Sit = findViewById(R.id.switchPagado1Sit2);
-        TextView euros1Sit = findViewById(R.id.euros1Sit);
+        Coments1Sit = findViewById(R.id.Coments1Sit);
+        NTalon1Sit = findViewById(R.id.NTalon1Sit);
+        Pendiente1Sit = findViewById(R.id.switchPendiente1Sit);
+        Validado1Sit = findViewById(R.id.switchValidado1Sit);
+        Pagado1Sit = findViewById(R.id.switchPagado1Sit2);
+        euros1Sit = findViewById(R.id.euros1Sit);
 
-        Intent recoverIntent = getIntent();
-        double euros = recoverIntent.getDoubleExtra("euros", 0.0);
-        String nombre = recoverIntent.getStringExtra("nombre");
+        registroId = getIntent().getLongExtra("registro_id", -1);
+        double euros = getIntent().getDoubleExtra("euros", 0.0);
+
+        if (registroId == -1) {
+            ToastHelper.error(this, "ID de registro no válido");
+            finish();
+            return;
+        }
 
         NumberFormat format = NumberFormat.getCurrencyInstance();
         format.setCurrency(Currency.getInstance("EUR"));
-        String textoEuros = format.format(euros);
-        euros1Sit.setText(textoEuros);
+        euros1Sit.setText(format.format(euros));
 
-        dbh = new DatabaseHelper(this);
-        Cursor cursor = dbh.obtenerSituacion1(nombre);
-        if (cursor != null && cursor.moveToFirst()) {
-            int presentado = cursor.getInt(0);
-            int validado = cursor.getInt(1);
-            int pagado = cursor.getInt(2);
-            int nTalon = cursor.getInt(3);
-            String comentarios = cursor.getString(4);
+        cargarDatos();
 
-            actualizarEstadoSwitch(Pendiente1Sit, presentado == 1, "Aprobado", "Pendiente");
-            actualizarEstadoSwitch(Validado1Sit, validado == 1, "Validado", "Por Validar");
-            actualizarEstadoSwitch(Pagado1Sit, pagado == 1, "Pagado", "Por Pagar");
+        Pendiente1Sit.setOnCheckedChangeListener((b, isChecked) -> actualizarSwitch(Pendiente1Sit, isChecked, "Aprobado", "Pendiente"));
+        Validado1Sit.setOnCheckedChangeListener((b, isChecked) -> actualizarSwitch(Validado1Sit, isChecked, "Validado", "Por Validar"));
+        Pagado1Sit.setOnCheckedChangeListener((b, isChecked) -> actualizarSwitch(Pagado1Sit, isChecked, "Pagado", "Por Pagar"));
 
-            NTalon1Sit.setText(String.valueOf(nTalon));
-            Coments1Sit.setText(comentarios);
-
-            cursor.close();
-        }
-
-        Pendiente1Sit.setOnCheckedChangeListener((b, isChecked) -> {
-            actualizarEstadoSwitch(Pendiente1Sit, isChecked, "Aprobado", "Pendiente");
-        });
-
-        Validado1Sit.setOnCheckedChangeListener((b, isChecked) -> {
-            actualizarEstadoSwitch(Validado1Sit, isChecked, "Validado", "Por Validar");
-        });
-
-        Pagado1Sit.setOnCheckedChangeListener((b, isChecked) -> {
-            actualizarEstadoSwitch(Pagado1Sit, isChecked, "Pagado", "Por Pagar");
-        });
-
-
-        finishButton.setOnClickListener(v -> {
-            int presentado = 0;
-            if (Pendiente1Sit.isChecked()) presentado = 1;
-
-            int validado = 0;
-            if (Validado1Sit.isChecked()) validado = 1;
-
-            int pagado = 0;
-            if (Pagado1Sit.isChecked()) pagado = 1;
-
-            String nTalonTexto = NTalon1Sit.getText().toString();
-            int nTalon = 0;
-            if (!nTalonTexto.isEmpty()) {
-                try {
-                    nTalon = Integer.parseInt(nTalonTexto);
-                } catch (NumberFormatException ignored) {
-                }
-            }
-
-            String comentarios = Coments1Sit.getText().toString();
-
-            boolean updated = dbh.updateSituacion1(nombre, presentado, validado, pagado, nTalon, comentarios);
-
-            if (updated) {
-                nh.Notification(this, "Situación actualizada", "Cambios guardados para " + nombre);
-                startActivity(new Intent(this, MainActivity.class));
-                finish();
-            } else {
-                ToastHelper.error(this, "Error al actualizar o guardar");
-            }
-        });
+        finishButton.setOnClickListener(v -> guardarCambios());
 
         cancelButton.setOnClickListener(v -> {
-            Intent cancelIntent = new Intent(this, MainActivity.class);
-            startActivity(cancelIntent);
+            startActivity(new Intent(this, MainActivity.class));
             finish();
         });
     }
 
-    private void actualizarEstadoSwitch(Switch s, boolean check, String TextYes, String TextNo) {
-        s.setChecked(check);
-        if (check) {
-            s.setText(TextYes);
-            s.setTextColor(Color.GREEN);
-        } else {
-            s.setText(TextNo);
-            s.setTextColor(Color.RED);
+    private void cargarDatos() {
+        apiService.getRegistroById(registroId).enqueue(new Callback<Registro>() {
+            @Override
+            public void onResponse(Call<Registro> call, Response<Registro> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    registro = response.body();
+                    actualizarSwitch(Pendiente1Sit, registro.getPresentado(), "Aprobado", "Pendiente");
+                    actualizarSwitch(Validado1Sit, registro.getValidado(), "Validado", "Por Validar");
+                    actualizarSwitch(Pagado1Sit, registro.getPagado(), "Pagado", "Por Pagar");
+                    NTalon1Sit.setText(String.valueOf(registro.getnTalon() != null ? registro.getnTalon() : ""));
+                    Coments1Sit.setText(registro.getComentarios() != null ? registro.getComentarios() : "");
+                } else {
+                    ToastHelper.error(Situacion1Activity.this, "No se pudo cargar la situación");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Registro> call, Throwable t) {
+                ToastHelper.error(Situacion1Activity.this, "Fallo de red: " + t.getMessage());
+            }
+        });
+    }
+
+    private void guardarCambios() {
+        if (registro == null) {
+            ToastHelper.error(this, "Registro no disponible");
+            return;
         }
+        registro.setPresentado(Pendiente1Sit.isChecked());
+        registro.setValidado(Validado1Sit.isChecked());
+        registro.setPagado(Pagado1Sit.isChecked());
+        String nTalonTexto = NTalon1Sit.getText().toString().trim();
+        Integer nTalon = nTalonTexto.isEmpty() ? null : Integer.parseInt(nTalonTexto);
+        String comentarios = Coments1Sit.getText().toString().trim();
+
+        apiService.updateSituacion1(registro.getId(),
+                registro.getPresentado(),
+                registro.getValidado(),
+                registro.getPagado(),
+                nTalon,
+                comentarios).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    nh.Notification(Situacion1Activity.this, "Situación actualizada", "Cambios guardados");
+                    startActivity(new Intent(Situacion1Activity.this, MainActivity.class));
+                    finish();
+                } else {
+                    ToastHelper.error(Situacion1Activity.this, "Error al guardar");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                ToastHelper.error(Situacion1Activity.this, "Fallo de red: " + t.getMessage());
+            }
+        });
+    }
+
+    private void actualizarSwitch(Switch s, boolean checked, String yes, String no) {
+        s.setChecked(checked);
+        s.setText(checked ? yes : no);
+        s.setTextColor(checked ? Color.GREEN : Color.RED);
     }
 }

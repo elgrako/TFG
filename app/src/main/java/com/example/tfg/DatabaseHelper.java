@@ -1,3 +1,4 @@
+/**
 package com.example.tfg;
 
 import android.content.Context;
@@ -292,3 +293,4 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return rows > 0;
     }
 }
+ **/

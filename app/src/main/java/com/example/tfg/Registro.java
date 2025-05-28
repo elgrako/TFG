@@ -10,6 +10,12 @@ public class Registro implements Serializable {
     private double euros;
     private String email;
     private int telefono;
+    private Boolean presentado;
+    private Boolean validado;
+    private Boolean pagado;
+    private Integer nTalon;
+    private String comentarios;
+
 
     public Registro(Long id, String nombre, String dni, String nExpediente, double euros, String email, int telefono) {
         this.id = id;
@@ -31,6 +37,23 @@ public class Registro implements Serializable {
         this.euros = euros;
         this.email = "";
         this.telefono = 0;
+    }
+
+    public Registro(Long id, String nombre, String dni, String nExpediente, double euros,
+                    String email, int telefono, Boolean presentado, Boolean validado,
+                    Boolean pagado, Integer nTalon, String comentarios) {
+        this.id = id;
+        this.nombre = nombre;
+        this.dni = dni;
+        this.nExpediente = nExpediente;
+        this.euros = euros;
+        this.email = email;
+        this.telefono = telefono;
+        this.presentado = presentado;
+        this.validado = validado;
+        this.pagado = pagado;
+        this.nTalon = nTalon;
+        this.comentarios = comentarios;
     }
 
     public Long getId() {
@@ -87,6 +110,46 @@ public class Registro implements Serializable {
 
     public void setTelefono(int telefono) {
         this.telefono = telefono;
+    }
+
+    public Boolean getPresentado() {
+        return presentado;
+    }
+
+    public void setPresentado(Boolean presentado) {
+        this.presentado = presentado;
+    }
+
+    public Boolean getValidado() {
+        return validado;
+    }
+
+    public void setValidado(Boolean validado) {
+        this.validado = validado;
+    }
+
+    public Boolean getPagado() {
+        return pagado;
+    }
+
+    public void setPagado(Boolean pagado) {
+        this.pagado = pagado;
+    }
+
+    public Integer getnTalon() {
+        return nTalon;
+    }
+
+    public void setnTalon(Integer nTalon) {
+        this.nTalon = nTalon;
+    }
+
+    public String getComentarios() {
+        return comentarios;
+    }
+
+    public void setComentarios(String comentarios) {
+        this.comentarios = comentarios;
     }
 
     @Override

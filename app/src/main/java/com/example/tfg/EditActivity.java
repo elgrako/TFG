@@ -9,7 +9,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.tfg.api.RetrofitClient;
 import com.example.tfg.api.ApiService;
-import com.example.tfg.Registro;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -38,11 +37,9 @@ public class EditActivity extends AppCompatActivity {
         okButton = findViewById(R.id.nextEditButton);
         cancelButton = findViewById(R.id.backEditButton);
 
-        // Obtener el registro si estamos editando
         registroExistente = (Registro) getIntent().getSerializableExtra("registro");
 
         if (registroExistente != null) {
-            // Rellenar campos con los datos existentes
             nameField.setText(registroExistente.getNombre());
             dniField.setText(registroExistente.getDni());
             nExpedienteField.setText(registroExistente.getnExpediente());
@@ -83,33 +80,22 @@ public class EditActivity extends AppCompatActivity {
             return;
         }
 
-        // Crear el registro con ID si existe
-        Registro registro;
         if (registroExistente != null) {
-            registro = new Registro(
+            Registro registro = new Registro(
                     registroExistente.getId(),
-                    nombre,
-                    dni,
-                    nExpediente,
-                    euros,
-                    email,
-                    telefono
+                    nombre, dni, nExpediente, euros, email, telefono
             );
-        } else {
-            // Para nuevo registro, primero creamos sin ID (el servidor lo asignará)
-            registro = new Registro();
-            registro.setNombre(nombre);
-            registro.setDni(dni);
-            registro.setnExpediente(nExpediente);
-            registro.setEuros(euros);
-            registro.setEmail(email);
-            registro.setTelefono(telefono);
-        }
-
-        if (registroExistente != null) {
             actualizarRegistro(registro);
         } else {
-            crearRegistro(registro);
+            Registro nuevoRegistro = new Registro();
+            nuevoRegistro.setNombre(nombre);
+            nuevoRegistro.setDni(dni);
+            nuevoRegistro.setnExpediente(nExpediente);
+            nuevoRegistro.setEuros(euros);
+            nuevoRegistro.setEmail(email);
+            nuevoRegistro.setTelefono(telefono);
+
+            crearRegistro(nuevoRegistro);
         }
     }
 
@@ -117,9 +103,10 @@ public class EditActivity extends AppCompatActivity {
         apiService.createRegistro(registro).enqueue(new Callback<Registro>() {
             @Override
             public void onResponse(Call<Registro> call, Response<Registro> response) {
-                if (response.isSuccessful()) {
+                if (response.isSuccessful() && response.body() != null) {
                     ToastHelper.info(EditActivity.this, "Registro creado");
-                    irSituacion1(registro.getNombre(), registro.getEuros());
+                    Registro creado = response.body();
+                    irSituacion1(creado.getNombre(), creado.getEuros());
                 } else {
                     ToastHelper.error(EditActivity.this, "Error al crear registro");
                 }
@@ -153,9 +140,10 @@ public class EditActivity extends AppCompatActivity {
 
     private void irSituacion1(String nombre, double euros) {
         Intent intent = new Intent(this, Situacion1Activity.class);
-        intent.putExtra("nombre", nombre);
-        intent.putExtra("euros", euros);
+        intent.putExtra("registro_id", registroExistente.getId());
+        intent.putExtra("euros", registroExistente.getEuros());
         startActivity(intent);
+
         finish();
     }
 }

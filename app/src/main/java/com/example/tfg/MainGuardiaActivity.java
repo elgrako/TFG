@@ -1,48 +1,49 @@
 package com.example.tfg;
 
-import android.annotation.SuppressLint;
-import android.database.Cursor;
+import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.ListView;
-import android.widget.TextView;
-import androidx.appcompat.app.AppCompatActivity;
-import android.content.Intent;
-import android.graphics.Color;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.AdapterView;
-import android.widget.Toast;
+import android.view.View;
+import android.widget.*;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.tfg.api.ApiService;
+import com.example.tfg.api.RetrofitClient;
+
 import java.util.ArrayList;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainGuardiaActivity extends AppCompatActivity {
 
-    DatabaseHelper dbh;
     ListView listViewGuardias;
     ArrayList<Guardia> listaGuardias;
     ArrayAdapter<Guardia> adapter;
     NotificationHelper nh;
+    ApiService apiService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_guardia);
 
-        dbh = new DatabaseHelper(this);
+        apiService = RetrofitClient.getInstance().getApi();
         listViewGuardias = findViewById(R.id.listaGuardias);
         listaGuardias = new ArrayList<>();
-
         nh = new NotificationHelper();
 
         registerForContextMenu(listViewGuardias);
 
         TextView verGuardias = findViewById(R.id.verGuardias);
         TextView verJudiciales = findViewById(R.id.verJudiciales);
-
         verGuardias.setTextColor(Color.DKGRAY);
         verJudiciales.setTextColor(Color.BLUE);
 
@@ -57,8 +58,7 @@ public class MainGuardiaActivity extends AppCompatActivity {
 
         Button newButton = findViewById(R.id.newGuardiaButton);
         newButton.setOnClickListener(v -> {
-            Intent intent = new Intent(MainGuardiaActivity.this, GuardiaActivity.class);
-            startActivity(intent);
+            startActivity(new Intent(MainGuardiaActivity.this, GuardiaActivity.class));
         });
 
         cargarGuardias();
@@ -71,23 +71,25 @@ public class MainGuardiaActivity extends AppCompatActivity {
     }
 
     private void cargarGuardias() {
-        listaGuardias.clear();
-        @SuppressLint("Range") Cursor cursor = dbh.obtenerGuardias();
-        if (cursor != null && cursor.moveToFirst()) {
-            do {
-                @SuppressLint("Range") int id = cursor.getInt(cursor.getColumnIndex("id"));
-                @SuppressLint("Range") String nombre = cursor.getString(cursor.getColumnIndex("nombreAsistido"));
-                @SuppressLint("Range") String dia = cursor.getString(cursor.getColumnIndex("diaActuacion"));
-                @SuppressLint("Range") int juzgado = cursor.getInt(cursor.getColumnIndex("porJuzgado"));
-                @SuppressLint("Range") int cobrado = cursor.getInt(cursor.getColumnIndex("cobrado"));
+        apiService.getAllGuardias().enqueue(new Callback<List<Guardia>>() {
+            @Override
+            public void onResponse(Call<List<Guardia>> call, Response<List<Guardia>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    listaGuardias.clear();
+                    listaGuardias.addAll(response.body());
 
-                listaGuardias.add(new Guardia(id, nombre, dia, juzgado == 1, cobrado == 1));
-            } while (cursor.moveToNext());
-            cursor.close();
-        }
+                    adapter = new GuardiaAdapter(MainGuardiaActivity.this, listaGuardias);
+                    listViewGuardias.setAdapter(adapter);
+                } else {
+                    ToastHelper.error(MainGuardiaActivity.this, "Error al cargar guardias");
+                }
+            }
 
-        adapter = new GuardiaAdapter(this, listaGuardias);
-        listViewGuardias.setAdapter(adapter);
+            @Override
+            public void onFailure(Call<List<Guardia>> call, Throwable t) {
+                ToastHelper.error(MainGuardiaActivity.this, "Error de red: " + t.getMessage());
+            }
+        });
     }
 
     @Override
@@ -117,9 +119,8 @@ public class MainGuardiaActivity extends AppCompatActivity {
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         int position = info.position;
-        if (position == 0) {
-            return false;
-        }
+        if (position == 0) return false;
+
         Guardia guardiaSeleccionada = listaGuardias.get(position - 1);
 
         if (item.getItemId() == R.id.situacion_guardia_context) {
@@ -128,22 +129,33 @@ public class MainGuardiaActivity extends AppCompatActivity {
             startActivity(intent);
             return true;
         } else if (item.getItemId() == R.id.delete_guardia_context) {
-        boolean eliminado = dbh.borrarGuardiaPorId(guardiaSeleccionada.getId());
-        if (eliminado) {
-            nh.Notification(
-                    this,
-                    "Guardia eliminada",
-                    "Se eliminó el registro de " + guardiaSeleccionada.getNombreAsistido()
-            );
-            cargarGuardias();
-        } else {
-            ToastHelper.error(this, "No se pudo eliminar la guardia");
+            eliminarGuardia(guardiaSeleccionada);
+            return true;
         }
-        return true;
-    }
-
-
 
         return super.onContextItemSelected(item);
+    }
+
+    private void eliminarGuardia(Guardia guardia) {
+        apiService.deleteGuardia((long) guardia.getId()).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    nh.Notification(
+                            MainGuardiaActivity.this,
+                            "Guardia eliminada",
+                            "Se eliminó la guardia de " + guardia.getNombreAsistido()
+                    );
+                    cargarGuardias();
+                } else {
+                    ToastHelper.error(MainGuardiaActivity.this, "Error al eliminar guardia");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                ToastHelper.error(MainGuardiaActivity.this, "Fallo de red: " + t.getMessage());
+            }
+        });
     }
 }

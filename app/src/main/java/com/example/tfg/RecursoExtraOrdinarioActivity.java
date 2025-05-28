@@ -1,22 +1,28 @@
 package com.example.tfg;
 
-import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Switch;
-import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.tfg.api.RetrofitClient;
+import com.example.tfg.api.ApiService;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class RecursoExtraOrdinarioActivity extends AppCompatActivity {
 
     EditText expedienteField;
     Switch switchAdmitido;
     Button guardarButton, cancelarButton;
-    DatabaseHelper dbh;
-    int guardiaId;
+
+    ApiService apiService;
+    Long guardiaId;
+    RecursoExtraOrdinario recursoExistente;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,8 +34,8 @@ public class RecursoExtraOrdinarioActivity extends AppCompatActivity {
         guardarButton = findViewById(R.id.guardarRecursoExtraButton);
         cancelarButton = findViewById(R.id.cancelarRecursoExtraButton);
 
-        dbh = new DatabaseHelper(this);
-        guardiaId = getIntent().getIntExtra("guardia_id", -1);
+        apiService = RetrofitClient.getInstance().getApi();
+        guardiaId = getIntent().getLongExtra("guardia_id", -1);
 
         if (guardiaId == -1) {
             ToastHelper.info(this, "Guardia no encontrada");
@@ -42,37 +48,75 @@ public class RecursoExtraOrdinarioActivity extends AppCompatActivity {
         switchAdmitido.setOnCheckedChangeListener((btn, checked) ->
                 actualizarEstadoSwitch(switchAdmitido, checked, "Admitido", "Rechazado"));
 
-        guardarButton.setOnClickListener(v -> {
-            String exp = expedienteField.getText().toString().trim();
-            if (exp.isEmpty()) {
-                ToastHelper.info(this, "Introduce el número de expediente");
-                return;
-            }
-
-            int nExpediente = Integer.parseInt(exp);
-            int admitido = switchAdmitido.isChecked() ? 1 : 0;
-
-            boolean guardado = dbh.insertarActualizarRecursoExtraOrdinario(guardiaId, nExpediente, admitido);
-            if (guardado) {
-                ToastHelper.info(this, "Guardado correctamente");
-                finish();
-            } else {
-                ToastHelper.error(this, "Error al guardar");
-            }
-        });
+        guardarButton.setOnClickListener(v -> guardarDatos());
 
         cancelarButton.setOnClickListener(v -> finish());
     }
 
     private void cargarDatosSiExisten() {
-        Cursor cursor = dbh.obtenerRecursoExtraOrdinarioPorId(guardiaId);
-        if (cursor != null && cursor.moveToFirst()) {
-            expedienteField.setText(String.valueOf(cursor.getInt(0)));
-            actualizarEstadoSwitch(switchAdmitido, cursor.getInt(1) == 1, "Admitido", "Rechazado");
-            cursor.close();
-        } else {
-            actualizarEstadoSwitch(switchAdmitido, false, "Admitido", "Rechazado");
+        apiService.getRecursoExtraByGuardiaId(guardiaId).enqueue(new Callback<RecursoExtraOrdinario>() {
+            @Override
+            public void onResponse(Call<RecursoExtraOrdinario> call, Response<RecursoExtraOrdinario> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    recursoExistente = response.body();
+                    expedienteField.setText(String.valueOf(recursoExistente.getnExpediente()));
+                    actualizarEstadoSwitch(switchAdmitido, recursoExistente.getAdmitido(), "Admitido", "Rechazado");
+                } else {
+                    recursoExistente = null;
+                    actualizarEstadoSwitch(switchAdmitido, false, "Admitido", "Rechazado");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<RecursoExtraOrdinario> call, Throwable t) {
+                ToastHelper.error(RecursoExtraOrdinarioActivity.this, "Fallo de red: " + t.getMessage());
+            }
+        });
+    }
+
+    private void guardarDatos() {
+        String expedienteStr = expedienteField.getText().toString().trim();
+
+        if (expedienteStr.isEmpty()) {
+            ToastHelper.info(this, "Introduce el número de expediente");
+            return;
         }
+
+        int nExpediente = Integer.parseInt(expedienteStr);
+        boolean admitido = switchAdmitido.isChecked();
+
+        if (recursoExistente != null) {
+            recursoExistente.setnExpediente(nExpediente);
+            recursoExistente.setAdmitido(admitido);
+
+            apiService.updateRecursoExtra(recursoExistente.getId(), recursoExistente).enqueue(callback());
+        } else {
+            RecursoExtraOrdinario nuevo = new RecursoExtraOrdinario();
+            nuevo.setGuardiaId(guardiaId);
+            nuevo.setnExpediente(nExpediente);
+            nuevo.setAdmitido(admitido);
+
+            apiService.createRecursoExtra(nuevo).enqueue(callback());
+        }
+    }
+
+    private Callback<RecursoExtraOrdinario> callback() {
+        return new Callback<RecursoExtraOrdinario>() {
+            @Override
+            public void onResponse(Call<RecursoExtraOrdinario> call, Response<RecursoExtraOrdinario> response) {
+                if (response.isSuccessful()) {
+                    ToastHelper.info(RecursoExtraOrdinarioActivity.this, "Guardado correctamente");
+                    finish();
+                } else {
+                    ToastHelper.error(RecursoExtraOrdinarioActivity.this, "Error al guardar");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<RecursoExtraOrdinario> call, Throwable t) {
+                ToastHelper.error(RecursoExtraOrdinarioActivity.this, "Fallo de red: " + t.getMessage());
+            }
+        };
     }
 
     private void actualizarEstadoSwitch(Switch s, boolean check, String textoOn, String textoOff) {

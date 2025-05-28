@@ -1,7 +1,5 @@
 package com.example.tfg;
 
-import android.annotation.SuppressLint;
-import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.widget.Button;
@@ -10,20 +8,26 @@ import android.widget.Switch;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.tfg.api.ApiService;
+import com.example.tfg.api.RetrofitClient;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class ApelacionGuardiaActivity extends AppCompatActivity {
 
     Switch switchAdmitido, switchPresentado, switchSentencia;
     EditText expedienteField;
     Button guardarButton, cancelarButton;
-    DatabaseHelper dbh;
     int guardiaId;
+    Long apelacionId = null;
+    ApiService apiService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_apelacion_guardia);
-
-        dbh = new DatabaseHelper(this);
 
         switchAdmitido = findViewById(R.id.switchAdmitidoApelacion);
         switchPresentado = findViewById(R.id.switchPresentadoApelacion);
@@ -31,6 +35,8 @@ public class ApelacionGuardiaActivity extends AppCompatActivity {
         expedienteField = findViewById(R.id.nExpedienteApelacionField);
         guardarButton = findViewById(R.id.guardarApelacionGuardiaButton);
         cancelarButton = findViewById(R.id.cancelarApelacionGuardiaButton);
+
+        apiService = RetrofitClient.getInstance().getApi();
 
         guardiaId = getIntent().getIntExtra("guardia_id", -1);
         if (guardiaId == -1) {
@@ -43,7 +49,7 @@ public class ApelacionGuardiaActivity extends AppCompatActivity {
         actualizarEstadoSwitch(switchPresentado, false, "Presentado", "Pendiente");
         actualizarEstadoSwitch(switchSentencia, false, "Sentencia", "Apelación");
 
-        cargarDatosSiExisten();
+        cargarApelacion();
 
         switchAdmitido.setOnCheckedChangeListener((btn, checked) ->
                 actualizarEstadoSwitch(switchAdmitido, checked, "Admitido", "Rechazado"));
@@ -52,55 +58,79 @@ public class ApelacionGuardiaActivity extends AppCompatActivity {
         switchSentencia.setOnCheckedChangeListener((btn, checked) ->
                 actualizarEstadoSwitch(switchSentencia, checked, "Sentencia", "Apelación"));
 
-        guardarButton.setOnClickListener(v -> {
-            String expediente = expedienteField.getText().toString().trim();
-            boolean admitido = switchAdmitido.isChecked();
-            boolean presentado = switchPresentado.isChecked();
-            boolean sentencia = switchSentencia.isChecked();
-
-            if (expediente.isEmpty()) {
-                ToastHelper.error(this, "Introduce el número de expediente");
-                return;
-            }
-
-            boolean insertado = dbh.insertaroActualizarApelacionGuardia(
-                    guardiaId,
-                    expediente,
-                    admitido,
-                    presentado,
-                    sentencia
-            );
-
-            if (insertado) {
-                NotificationHelper.Notification(
-                        this,
-                        "Apelación guardada",
-                        "Expediente: " + expediente + " guardado correctamente."
-                );
-                finish();
-            } else {
-                ToastHelper.error(this, "Error al guardar la apelación");
-            }
-        });
+        guardarButton.setOnClickListener(v -> guardarApelacion());
 
         cancelarButton.setOnClickListener(v -> finish());
     }
 
-    private void cargarDatosSiExisten() {
-        Cursor cursor = dbh.obtenerApelacionGuardiaPorId(guardiaId);
-        if (cursor != null && cursor.moveToFirst()) {
-            @SuppressLint("Range") String expediente = cursor.getString(cursor.getColumnIndex("nExpediente"));
-            @SuppressLint("Range") int admitido = cursor.getInt(cursor.getColumnIndex("admitido"));
-            @SuppressLint("Range") int presentado = cursor.getInt(cursor.getColumnIndex("presentado"));
-            @SuppressLint("Range") int sentencia = cursor.getInt(cursor.getColumnIndex("sentencia"));
+    private void cargarApelacion() {
+        apiService.getApelacionByGuardiaId((long) guardiaId).enqueue(new Callback<ApelacionGuardia>() {
+            @Override
+            public void onResponse(Call<ApelacionGuardia> call, Response<ApelacionGuardia> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    ApelacionGuardia apelacion = response.body();
+                    apelacionId = apelacion.getId();
 
-            expedienteField.setText(expediente);
-            actualizarEstadoSwitch(switchAdmitido, admitido == 1, "Admitido", "Rechazado");
-            actualizarEstadoSwitch(switchPresentado, presentado == 1, "Presentado", "Pendiente");
-            actualizarEstadoSwitch(switchSentencia, sentencia == 1, "Sentencia", "Apelación");
+                    expedienteField.setText(apelacion.getnExpediente());
+                    actualizarEstadoSwitch(switchAdmitido, apelacion.isAdmitido(), "Admitido", "Rechazado");
+                    actualizarEstadoSwitch(switchPresentado, apelacion.isPresentado(), "Presentado", "Pendiente");
+                    actualizarEstadoSwitch(switchSentencia, apelacion.isSentencia(), "Sentencia", "Apelación");
+                }
+            }
 
-            cursor.close();
+            @Override
+            public void onFailure(Call<ApelacionGuardia> call, Throwable t) {
+                ToastHelper.error(ApelacionGuardiaActivity.this, "Error al cargar datos: " + t.getMessage());
+            }
+        });
+    }
+
+    private void guardarApelacion() {
+        String expediente = expedienteField.getText().toString().trim();
+        boolean admitido = switchAdmitido.isChecked();
+        boolean presentado = switchPresentado.isChecked();
+        boolean sentencia = switchSentencia.isChecked();
+
+        if (expediente.isEmpty()) {
+            ToastHelper.error(this, "Introduce el número de expediente");
+            return;
         }
+
+        ApelacionGuardia apelacion = new ApelacionGuardia();
+        apelacion.setGuardiaId((long) guardiaId);
+        apelacion.setnExpediente(expediente);
+        apelacion.setAdmitido(admitido);
+        apelacion.setPresentado(presentado);
+        apelacion.setSentencia(sentencia);
+
+        Call<ApelacionGuardia> call;
+        if (apelacionId != null) {
+            apelacion.setId(apelacionId);
+            call = apiService.updateApelacion(apelacionId, apelacion);
+        } else {
+            call = apiService.createApelacion(apelacion);
+        }
+
+        call.enqueue(new Callback<ApelacionGuardia>() {
+            @Override
+            public void onResponse(Call<ApelacionGuardia> call, Response<ApelacionGuardia> response) {
+                if (response.isSuccessful()) {
+                    NotificationHelper.Notification(
+                            ApelacionGuardiaActivity.this,
+                            "Apelación guardada",
+                            "Expediente: " + expediente + " guardado correctamente."
+                    );
+                    finish();
+                } else {
+                    ToastHelper.error(ApelacionGuardiaActivity.this, "Error al guardar apelación");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApelacionGuardia> call, Throwable t) {
+                ToastHelper.error(ApelacionGuardiaActivity.this, "Fallo de red: " + t.getMessage());
+            }
+        });
     }
 
     private void actualizarEstadoSwitch(Switch s, boolean check, String textoOn, String textoOff) {

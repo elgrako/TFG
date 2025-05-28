@@ -1,7 +1,6 @@
 package com.example.tfg;
 
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.widget.Button;
@@ -11,21 +10,30 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.tfg.api.ApiService;
+import com.example.tfg.api.RetrofitClient;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class SituacionGuardiaActivity extends AppCompatActivity {
 
     EditText comentariosField, nTalonField, eurosField;
     Switch presentadoSwitch, validadoSwitch, pagadoSwitch;
     Button cancelarButton, guardarButton, btnIrApelacion;
-    DatabaseHelper dbh;
     NotificationHelper nh;
-    int guardiaId;
+    Long guardiaId;
+    ApiService apiService;
+    SituacionGuardia situacionGuardia;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_situacion_guardia);
 
-        dbh = new DatabaseHelper(this);
+        apiService = RetrofitClient.getInstance().getApi();
+        nh = new NotificationHelper();
 
         comentariosField = findViewById(R.id.comentariosGuardiaField);
         nTalonField = findViewById(R.id.nTalonGuardiaField);
@@ -37,7 +45,7 @@ public class SituacionGuardiaActivity extends AppCompatActivity {
         guardarButton = findViewById(R.id.guardarSituacionGuardiaButton);
         btnIrApelacion = findViewById(R.id.btnIrApelacion);
 
-        guardiaId = getIntent().getIntExtra("guardia_id", -1);
+        guardiaId = getIntent().getLongExtra("guardia_id", -1);
 
         if (guardiaId == -1) {
             ToastHelper.error(this, "Error al recibir la guardia");
@@ -45,16 +53,7 @@ public class SituacionGuardiaActivity extends AppCompatActivity {
             return;
         }
 
-        Cursor cursor = dbh.obtenerSituacionGuardiaPorId(guardiaId);
-        if (cursor != null && cursor.moveToFirst()) {
-            comentariosField.setText(cursor.getString(0));
-            nTalonField.setText(cursor.getString(1));
-            eurosField.setText(cursor.getString(2));
-            actualizarEstadoSwitch(presentadoSwitch, cursor.getInt(3) == 1, "Presentado", "Pendiente");
-            actualizarEstadoSwitch(validadoSwitch, cursor.getInt(4) == 1, "Validado", "Por Validar");
-            actualizarEstadoSwitch(pagadoSwitch, cursor.getInt(5) == 1, "Pagado", "Por Pagar");
-            cursor.close();
-        }
+        cargarSituacionGuardia();
 
         btnIrApelacion.setOnClickListener(v -> {
             Intent intent = new Intent(this, ApelacionGuardiaActivity.class);
@@ -71,26 +70,64 @@ public class SituacionGuardiaActivity extends AppCompatActivity {
         pagadoSwitch.setOnCheckedChangeListener((b, isChecked) ->
                 actualizarEstadoSwitch(pagadoSwitch, isChecked, "Pagado", "Por Pagar"));
 
-        guardarButton.setOnClickListener(v -> {
-            String comentarios = comentariosField.getText().toString().trim();
-            String nTalon = nTalonField.getText().toString().trim();
-            String euros = eurosField.getText().toString().trim();
-
-            int presentado = 0;
-            if (presentadoSwitch.isChecked()) presentado = 1;
-            int validado = 0;
-            if (validadoSwitch.isChecked()) validado = 1;
-            int pagado = 0;
-            if (pagadoSwitch.isChecked()) pagado = 1;
-
-            boolean ok = dbh.insertarSituacionGuardiaPorId(guardiaId, comentarios, nTalon, euros, presentado, validado, pagado);
-            if (ok) {
-                NotificationHelper.Notification(this, "Situación guardada", "Se actualizó la situación de la guardia");
-                finish();
-            }
-        });
+        guardarButton.setOnClickListener(v -> guardarCambios());
 
         cancelarButton.setOnClickListener(v -> finish());
+    }
+
+    private void cargarSituacionGuardia() {
+        apiService.getByGuardiaId(guardiaId).enqueue(new Callback<SituacionGuardia>() {
+            @Override
+            public void onResponse(Call<SituacionGuardia> call, Response<SituacionGuardia> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    situacionGuardia = response.body();
+                    comentariosField.setText(situacionGuardia.getComentarios());
+                    nTalonField.setText(situacionGuardia.getNTalon());
+                    eurosField.setText(situacionGuardia.getEuros());
+                    actualizarEstadoSwitch(presentadoSwitch, situacionGuardia.getPresentado(), "Presentado", "Pendiente");
+                    actualizarEstadoSwitch(validadoSwitch, situacionGuardia.getValidado(), "Validado", "Por Validar");
+                    actualizarEstadoSwitch(pagadoSwitch, situacionGuardia.getPagado(), "Pagado", "Por Pagar");
+                } else {
+                    ToastHelper.error(SituacionGuardiaActivity.this, "No se pudo cargar la situación");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<SituacionGuardia> call, Throwable t) {
+                ToastHelper.error(SituacionGuardiaActivity.this, "Fallo de red: " + t.getMessage());
+            }
+        });
+    }
+
+    private void guardarCambios() {
+        if (situacionGuardia == null) {
+            ToastHelper.error(this, "Situación no disponible");
+            return;
+        }
+
+        situacionGuardia.setComentarios(comentariosField.getText().toString().trim());
+        situacionGuardia.setNTalon(nTalonField.getText().toString().trim());
+        situacionGuardia.setEuros(eurosField.getText().toString().trim());
+        situacionGuardia.setPresentado(presentadoSwitch.isChecked());
+        situacionGuardia.setValidado(validadoSwitch.isChecked());
+        situacionGuardia.setPagado(pagadoSwitch.isChecked());
+
+        apiService.updateSituacionGuardia(guardiaId, situacionGuardia).enqueue(new Callback<SituacionGuardia>() {
+            @Override
+            public void onResponse(Call<SituacionGuardia> call, Response<SituacionGuardia> response) {
+                if (response.isSuccessful()) {
+                    nh.Notification(SituacionGuardiaActivity.this, "Situación guardada", "Se actualizó la situación de la guardia");
+                    finish();
+                } else {
+                    ToastHelper.error(SituacionGuardiaActivity.this, "Error al guardar la situación");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<SituacionGuardia> call, Throwable t) {
+                ToastHelper.error(SituacionGuardiaActivity.this, "Fallo de red: " + t.getMessage());
+            }
+        });
     }
 
     private void actualizarEstadoSwitch(Switch s, boolean check, String textoOn, String textoOff) {
