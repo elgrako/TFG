@@ -19,7 +19,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     EditText userField, passField;
     Button registerButton, backButton;
-    final String API_URL = "http://10.0.2.2:8080/auth/register"; // Cambia a tu IP real si usas dispositivo físico
+    final String API_URL = "http://34.239.121.220/auth/register";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

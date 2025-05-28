@@ -20,7 +20,7 @@ public class LoginActivity extends AppCompatActivity {
 
     EditText userField, passField;
     Button loginButton, registerButton;
-    final String API_URL = "http://10.0.2.2:8080/auth/login"; //cambiar esto
+    final String API_URL = "http://34.239.121.220/auth/login";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

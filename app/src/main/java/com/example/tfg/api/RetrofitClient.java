@@ -4,7 +4,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitClient {
-    private static final String BASE_URL = "http://TU_BACKEND_URL/api/"; // 👈 CAMBIA ESTO
+    private static final String BASE_URL = "http://34.239.121.220/api/";
     private static RetrofitClient instance;
     private final ApiService api;
 
