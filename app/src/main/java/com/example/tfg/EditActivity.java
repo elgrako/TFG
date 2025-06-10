@@ -2,6 +2,7 @@ package com.example.tfg;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -9,6 +10,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.tfg.api.RetrofitClient;
 import com.example.tfg.api.ApiService;
+
+import java.io.IOException;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -108,16 +111,25 @@ public class EditActivity extends AppCompatActivity {
                     Registro creado = response.body();
                     irSituacion1(creado.getNombre(), creado.getEuros());
                 } else {
-                    ToastHelper.error(EditActivity.this, "Error al crear registro");
+                    String error = "";
+                    try {
+                        error = response.errorBody() != null ? response.errorBody().string() : "";
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    Log.e("Registro-ERROR", "Código: " + response.code() + ", Respuesta: " + error);
+                    ToastHelper.error(EditActivity.this, "Error al crear registro. Código: " + response.code());
                 }
             }
 
             @Override
             public void onFailure(Call<Registro> call, Throwable t) {
+                Log.e("Registro-FALLO", "Fallo de red: " + t.getMessage(), t);
                 ToastHelper.error(EditActivity.this, "Fallo de red: " + t.getMessage());
             }
         });
     }
+
 
     private void actualizarRegistro(Registro registro) {
         apiService.updateRegistro(registro.getId(), registro).enqueue(new Callback<Registro>() {

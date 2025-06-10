@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -20,7 +21,7 @@ public class LoginActivity extends AppCompatActivity {
 
     EditText userField, passField;
     Button loginButton, registerButton;
-    final String API_URL = "http://34.239.121.220/auth/login";
+    final String API_URL = "http://34.230.71.133/auth/login";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +67,7 @@ public class LoginActivity extends AppCompatActivity {
                 client.newCall(request).enqueue(new Callback() {
                     @Override
                     public void onFailure(Call call, IOException e) {
+                        Log.e("Login", "Fallo conexión: ", e);
                         runOnUiThread(() -> ToastHelper.error(LoginActivity.this, "Error de conexión"));
                     }
 

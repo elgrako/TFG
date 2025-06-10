@@ -3,6 +3,7 @@ package com.example.tfg;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Switch;
@@ -100,7 +101,7 @@ public class SituacionGuardiaActivity extends AppCompatActivity {
     }
 
     private void guardarCambios() {
-        if (situacionGuardia == null) {
+        if (situacionGuardia == null || guardiaId == null) {
             ToastHelper.error(this, "Situación no disponible");
             return;
         }
@@ -116,19 +117,22 @@ public class SituacionGuardiaActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<SituacionGuardia> call, Response<SituacionGuardia> response) {
                 if (response.isSuccessful()) {
-                    nh.Notification(SituacionGuardiaActivity.this, "Situación guardada", "Se actualizó la situación de la guardia");
+                    nh.Notification(SituacionGuardiaActivity.this, "Situación guardada", "Se actualizó correctamente");
                     finish();
                 } else {
-                    ToastHelper.error(SituacionGuardiaActivity.this, "Error al guardar la situación");
+                    Log.e("SituacionGuardia", "Error código: " + response.code());
+                    ToastHelper.error(SituacionGuardiaActivity.this, "Error al guardar. Código: " + response.code());
                 }
             }
 
             @Override
             public void onFailure(Call<SituacionGuardia> call, Throwable t) {
+                Log.e("SituacionGuardia", "Fallo red: " + t.getMessage());
                 ToastHelper.error(SituacionGuardiaActivity.this, "Fallo de red: " + t.getMessage());
             }
         });
     }
+
 
     private void actualizarEstadoSwitch(Switch s, boolean check, String textoOn, String textoOff) {
         s.setChecked(check);

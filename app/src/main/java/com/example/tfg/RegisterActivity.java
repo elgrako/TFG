@@ -2,6 +2,7 @@ package com.example.tfg;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -19,7 +20,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     EditText userField, passField;
     Button registerButton, backButton;
-    final String API_URL = "http://34.239.121.220/auth/register";
+    final String API_URL = "http://34.230.71.133/auth/register";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,8 +46,9 @@ public class RegisterActivity extends AppCompatActivity {
                 json.put("username", user);
                 json.put("password", pass);
                 JSONArray roles = new JSONArray();
-                roles.put("ROLE_USUARIO");
+                roles.put("ROLE_USER");
                 json.put("roles", roles);
+
 
                 RequestBody body = RequestBody.create(
                         json.toString(),
@@ -63,18 +65,25 @@ public class RegisterActivity extends AppCompatActivity {
                 client.newCall(request).enqueue(new Callback() {
                     @Override
                     public void onFailure(Call call, IOException e) {
+                        Log.e("Login", "Fallo conexión: ", e);
                         runOnUiThread(() -> ToastHelper.error(RegisterActivity.this, "Error de conexión con el servidor"));
                     }
 
                     @Override
                     public void onResponse(Call call, Response response) throws IOException {
+                        String responseBody = response.body() != null ? response.body().string() : "sin cuerpo";
+                        int statusCode = response.code();
+
+                        Log.e("Registro", "Código: " + statusCode + ", Respuesta: " + responseBody);
+
                         runOnUiThread(() -> {
                             if (response.isSuccessful()) {
                                 Toast.makeText(RegisterActivity.this, "Usuario registrado", Toast.LENGTH_SHORT).show();
                                 startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
                                 finish();
                             } else {
-                                ToastHelper.error(RegisterActivity.this, "Error al registrar. ¿Usuario ya existe?");
+                                ToastHelper.error(RegisterActivity.this,
+                                        "Error al registrar. Código: " + statusCode + "\nRespuesta: " + responseBody);
                             }
                         });
                     }

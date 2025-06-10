@@ -114,7 +114,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        registroSeleccionado = listaDatos.get(info.position - 1);
+
+        if (info.position >= 0 && info.position < listaDatos.size()) {
+            registroSeleccionado = listaDatos.get(info.position);
+        } else {
+            ToastHelper.error(this, "Indice invaido");
+            return false;
+        }
+
 
         int id = item.getItemId();
 

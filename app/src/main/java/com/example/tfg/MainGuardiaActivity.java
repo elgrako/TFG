@@ -119,7 +119,11 @@ public class MainGuardiaActivity extends AppCompatActivity {
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         int position = info.position;
-        if (position == 0) return false;
+
+        if (position <= 0 || position - 1 >= listaGuardias.size()) {
+            ToastHelper.error(this, "Guardia inválida");
+            return false;
+        }
 
         Guardia guardiaSeleccionada = listaGuardias.get(position - 1);
 

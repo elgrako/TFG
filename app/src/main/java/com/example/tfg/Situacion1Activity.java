@@ -3,6 +3,7 @@ package com.example.tfg;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.*;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -96,23 +97,27 @@ public class Situacion1Activity extends AppCompatActivity {
     }
 
     private void guardarCambios() {
-        if (registro == null) {
-            ToastHelper.error(this, "Registro no disponible");
+        if (registro == null || registro.getId() == null) {
+            ToastHelper.error(this, "Registro no disponible para guardar");
             return;
         }
+
         registro.setPresentado(Pendiente1Sit.isChecked());
         registro.setValidado(Validado1Sit.isChecked());
         registro.setPagado(Pagado1Sit.isChecked());
+
         String nTalonTexto = NTalon1Sit.getText().toString().trim();
         Integer nTalon = nTalonTexto.isEmpty() ? null : Integer.parseInt(nTalonTexto);
         String comentarios = Coments1Sit.getText().toString().trim();
 
-        apiService.updateSituacion1(registro.getId(),
+        apiService.updateSituacion1(
+                registro.getId(),
                 registro.getPresentado(),
                 registro.getValidado(),
                 registro.getPagado(),
                 nTalon,
-                comentarios).enqueue(new Callback<Void>() {
+                comentarios
+        ).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
@@ -120,16 +125,19 @@ public class Situacion1Activity extends AppCompatActivity {
                     startActivity(new Intent(Situacion1Activity.this, MainActivity.class));
                     finish();
                 } else {
-                    ToastHelper.error(Situacion1Activity.this, "Error al guardar");
+                    Log.e("Situacion1", "Error código: " + response.code());
+                    ToastHelper.error(Situacion1Activity.this, "Error al guardar (código " + response.code() + ")");
                 }
             }
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
+                Log.e("Situacion1", "Fallo red: " + t.getMessage());
                 ToastHelper.error(Situacion1Activity.this, "Fallo de red: " + t.getMessage());
             }
         });
     }
+
 
     private void actualizarSwitch(Switch s, boolean checked, String yes, String no) {
         s.setChecked(checked);

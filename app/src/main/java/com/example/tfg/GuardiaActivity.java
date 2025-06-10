@@ -3,6 +3,7 @@ package com.example.tfg;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Switch;
@@ -16,6 +17,7 @@ import com.example.tfg.api.RetrofitClient;
 import com.example.tfg.api.ApiService;
 import com.example.tfg.Guardia;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -109,16 +111,25 @@ public class GuardiaActivity extends AppCompatActivity {
                     startActivity(intent);
                     finish();
                 } else {
-                    ToastHelper.error(GuardiaActivity.this, "Error al guardar la guardia");
+                    String error = "";
+                    try {
+                        error = response.errorBody() != null ? response.errorBody().string() : "";
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    Log.e("Guardia-ERROR", "Código: " + response.code() + ", Respuesta: " + error);
+                    ToastHelper.error(GuardiaActivity.this, "Error al guardar guardia. Código: " + response.code());
                 }
             }
 
             @Override
             public void onFailure(Call<Guardia> call, Throwable t) {
+                Log.e("Guardia-FALLO", "Fallo de red: " + t.getMessage(), t);
                 ToastHelper.error(GuardiaActivity.this, "Fallo de red: " + t.getMessage());
             }
         });
     }
+
 
     private void actualizarEstadoSwitch(Switch s, boolean check, String TextYes, String TextNo) {
         s.setChecked(check);
