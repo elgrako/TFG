@@ -11,6 +11,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.example.tfg.entities.Guardia;
+
 import java.util.ArrayList;
 
 public class GuardiaAdapter extends ArrayAdapter<Guardia> {

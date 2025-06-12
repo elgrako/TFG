@@ -5,6 +5,7 @@
     <string name="switchPresentadoApelacion">Pending</string>
     <string name="switchSentenciaApelacion">Appeal</string>
     <string name="nExpedienteApelacion">Appeal File Number</string>
+    <string name="irRecurso">go to Resource</string>
     <string name="guardarApelacionbtn">Save</string>
     <string name="CancelarApelacionbtn">Cancel</string>
 

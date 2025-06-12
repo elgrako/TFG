@@ -2,13 +2,16 @@ package com.example.tfg;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Switch;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.tfg.Helpers.ToastHelper;
 import com.example.tfg.api.RetrofitClient;
 import com.example.tfg.api.ApiService;
+import com.example.tfg.entities.RecursoExtraOrdinario;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -75,14 +78,13 @@ public class RecursoExtraOrdinarioActivity extends AppCompatActivity {
     }
 
     private void guardarDatos() {
-        String expedienteStr = expedienteField.getText().toString().trim();
+        String nExpediente = expedienteField.getText().toString().trim();
 
-        if (expedienteStr.isEmpty()) {
+        if (nExpediente.isEmpty()) {
             ToastHelper.info(this, "Introduce el número de expediente");
             return;
         }
 
-        int nExpediente = Integer.parseInt(expedienteStr);
         boolean admitido = switchAdmitido.isChecked();
 
         if (recursoExistente != null) {
@@ -98,6 +100,8 @@ public class RecursoExtraOrdinarioActivity extends AppCompatActivity {
 
             apiService.createRecursoExtra(nuevo).enqueue(callback());
         }
+        Log.d("RecursoExtra", "Guardando recursoExtra -> expediente: " + nExpediente + ", admitido: " + admitido + ", guardiaId: " + guardiaId);
+
     }
 
     private Callback<RecursoExtraOrdinario> callback() {
@@ -108,12 +112,21 @@ public class RecursoExtraOrdinarioActivity extends AppCompatActivity {
                     ToastHelper.info(RecursoExtraOrdinarioActivity.this, "Guardado correctamente");
                     finish();
                 } else {
-                    ToastHelper.error(RecursoExtraOrdinarioActivity.this, "Error al guardar");
+                    String errorBody = "";
+                    try {
+                        errorBody = response.errorBody() != null ? response.errorBody().string() : "Sin cuerpo";
+                    } catch (Exception e) {
+                        errorBody = "Error al leer errorBody: " + e.getMessage();
+                    }
+
+                    Log.e("RecursoExtra", "Error al guardar \nCódigo: " + response.code() + "\nCuerpo: " + errorBody);
+                    ToastHelper.error(RecursoExtraOrdinarioActivity.this, "Error al guardar recurso");
                 }
             }
 
             @Override
             public void onFailure(Call<RecursoExtraOrdinario> call, Throwable t) {
+                Log.e("RecursoExtra", "Fallo de red: " + t.getMessage(), t);
                 ToastHelper.error(RecursoExtraOrdinarioActivity.this, "Fallo de red: " + t.getMessage());
             }
         };

@@ -5,6 +5,7 @@
     <string name="switchPresentadoApelacion">Pendiente</string>
     <string name="switchSentenciaApelacion">Apelación</string>
     <string name="nExpedienteApelacion">Nº Expediente Apelación</string>
+    <string name="irRecurso">ir al Recurso</string>
     <string name="guardarApelacionbtn">Guardar</string>
     <string name="CancelarApelacionbtn">Cancelar</string>
 

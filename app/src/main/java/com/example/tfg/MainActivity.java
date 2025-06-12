@@ -1,6 +1,5 @@
 package com.example.tfg;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
@@ -12,11 +11,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.*;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.tfg.Helpers.PreferenciasHelper;
+import com.example.tfg.Helpers.ToastHelper;
 import com.example.tfg.api.RetrofitClient;
-import com.example.tfg.Registro;
+import com.example.tfg.entities.Registro;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,8 +37,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        View headerView = getLayoutInflater().inflate(R.layout.header_datos, null);
+        
         listViewDatos = findViewById(R.id.listaDatosMain);
         listaDatos = new ArrayList<>();
+
+        listViewDatos.addHeaderView(headerView);
 
         TextView verGuardias = findViewById(R.id.verGuardiasMain);
         TextView verJudiciales = findViewById(R.id.verJudicialesMain);
@@ -63,7 +67,8 @@ public class MainActivity extends AppCompatActivity {
         });
 
         listViewDatos.setOnItemClickListener((parent, view, position, id) -> {
-            registroSeleccionado = listaDatos.get(position);
+            // Ajustar posición restando 1 para el header
+            registroSeleccionado = listaDatos.get(position - 1);
         });
 
         cargarDatos();
@@ -115,10 +120,11 @@ public class MainActivity extends AppCompatActivity {
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
 
-        if (info.position >= 0 && info.position < listaDatos.size()) {
-            registroSeleccionado = listaDatos.get(info.position);
+        // Ajustar posición restando 1 para el header
+        if (info.position >= 1 && info.position <= listaDatos.size()) {
+            registroSeleccionado = listaDatos.get(info.position - 1);
         } else {
-            ToastHelper.error(this, "Indice invaido");
+            ToastHelper.error(this, "Indice inválido");
             return false;
         }
 
@@ -190,6 +196,10 @@ public class MainActivity extends AppCompatActivity {
             return true;
         } else if (item.getItemId() == R.id.menu_multimedia) {
             startActivity(new Intent(this, MultimediaActivity.class));
+            return true;
+        } else if (item.getItemId() == R.id.menu_websocket) {
+            Intent intent = new Intent(MainActivity.this, WebSocketActivity.class);
+            startActivity(intent);
             return true;
         }
         return super.onOptionsItemSelected(item);

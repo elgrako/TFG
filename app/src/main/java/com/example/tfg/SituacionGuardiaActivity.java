@@ -7,12 +7,14 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Switch;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.tfg.Helpers.NotificationHelper;
+import com.example.tfg.Helpers.ToastHelper;
 import com.example.tfg.api.ApiService;
 import com.example.tfg.api.RetrofitClient;
+import com.example.tfg.entities.SituacionGuardia;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -59,6 +61,7 @@ public class SituacionGuardiaActivity extends AppCompatActivity {
         btnIrApelacion.setOnClickListener(v -> {
             Intent intent = new Intent(this, ApelacionGuardiaActivity.class);
             intent.putExtra("guardia_id", guardiaId);
+            Log.d("IntentDebug", "Extras recibidos: " + getIntent().getExtras());
             startActivity(intent);
         });
 
@@ -82,14 +85,10 @@ public class SituacionGuardiaActivity extends AppCompatActivity {
             public void onResponse(Call<SituacionGuardia> call, Response<SituacionGuardia> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     situacionGuardia = response.body();
-                    comentariosField.setText(situacionGuardia.getComentarios());
-                    nTalonField.setText(situacionGuardia.getNTalon());
-                    eurosField.setText(situacionGuardia.getEuros());
-                    actualizarEstadoSwitch(presentadoSwitch, situacionGuardia.getPresentado(), "Presentado", "Pendiente");
-                    actualizarEstadoSwitch(validadoSwitch, situacionGuardia.getValidado(), "Validado", "Por Validar");
-                    actualizarEstadoSwitch(pagadoSwitch, situacionGuardia.getPagado(), "Pagado", "Por Pagar");
+
+                    cargarCamposEnPantalla();
                 } else {
-                    ToastHelper.error(SituacionGuardiaActivity.this, "No se pudo cargar la situación");
+                    crearSituacionInicial();
                 }
             }
 
@@ -99,6 +98,58 @@ public class SituacionGuardiaActivity extends AppCompatActivity {
             }
         });
     }
+
+    private void crearSituacionInicial() {
+        situacionGuardia = new SituacionGuardia();
+        situacionGuardia.setGuardiaId(guardiaId);
+        situacionGuardia.setComentarios("");
+        situacionGuardia.setNTalon("");
+        situacionGuardia.setEuros("");
+        situacionGuardia.setPresentado(false);
+        situacionGuardia.setValidado(false);
+        situacionGuardia.setPagado(false);
+
+        apiService.createSituacionGuardia(situacionGuardia).enqueue(new Callback<SituacionGuardia>() {
+            @Override
+            public void onResponse(Call<SituacionGuardia> call, Response<SituacionGuardia> response) {
+                if (response.isSuccessful()) {
+                    situacionGuardia = response.body();
+                    cargarCamposEnPantalla();
+                } else {
+                    String errorMsg = "";
+                    try {
+                        errorMsg = response.errorBody() != null ? response.errorBody().string() : "Sin mensaje";
+                    } catch (Exception e) {
+                        errorMsg = "Error parsing cuerpo de error";
+                    }
+
+                    Log.e("SituacionGuardia", "Código: " + response.code() + " | Error: " + errorMsg);
+                    ToastHelper.error(SituacionGuardiaActivity.this,
+                            "Error al inicializar situación\nCódigo: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<SituacionGuardia> call, Throwable t) {
+                ToastHelper.error(SituacionGuardiaActivity.this, "Fallo al inicializar situación: " + t.getMessage());
+            }
+        });
+    }
+
+    private void cargarCamposEnPantalla() {
+        comentariosField.setText(situacionGuardia.getComentarios());
+        nTalonField.setText(situacionGuardia.getNTalon());
+        eurosField.setText(situacionGuardia.getEuros());
+        actualizarEstadoSwitch(presentadoSwitch, situacionGuardia.getPresentado(), "Presentado", "Pendiente");
+        actualizarEstadoSwitch(validadoSwitch, situacionGuardia.getValidado(), "Validado", "Por Validar");
+        actualizarEstadoSwitch(pagadoSwitch, situacionGuardia.getPagado(), "Pagado", "Por Pagar");
+        Log.d("LOAD_DEBUG", "Cargando situación:");
+        Log.d("LOAD_DEBUG", "Comentarios: " + situacionGuardia.getComentarios());
+        Log.d("LOAD_DEBUG", "nTalon: " + situacionGuardia.getNTalon());
+        Log.d("LOAD_DEBUG", "Euros: " + situacionGuardia.getEuros());
+
+    }
+
 
     private void guardarCambios() {
         if (situacionGuardia == null || guardiaId == null) {
@@ -113,14 +164,19 @@ public class SituacionGuardiaActivity extends AppCompatActivity {
         situacionGuardia.setValidado(validadoSwitch.isChecked());
         situacionGuardia.setPagado(pagadoSwitch.isChecked());
 
-        apiService.updateSituacionGuardia(guardiaId, situacionGuardia).enqueue(new Callback<SituacionGuardia>() {
+        Log.d("SAVE_DEBUG", "Guardando Situación:");
+        Log.d("SAVE_DEBUG", "Comentarios: " + situacionGuardia.getComentarios());
+        Log.d("SAVE_DEBUG", "nTalon: " + situacionGuardia.getNTalon());
+        Log.d("SAVE_DEBUG", "Euros: " + situacionGuardia.getEuros());
+
+        apiService.updateSituacionGuardia(situacionGuardia.getId(), situacionGuardia).enqueue(new Callback<SituacionGuardia>() {
             @Override
             public void onResponse(Call<SituacionGuardia> call, Response<SituacionGuardia> response) {
                 if (response.isSuccessful()) {
                     nh.Notification(SituacionGuardiaActivity.this, "Situación guardada", "Se actualizó correctamente");
                     finish();
                 } else {
-                    Log.e("SituacionGuardia", "Error código: " + response.code());
+                    Log.e("SituacionGuardia", "Error codigo: " + response.code());
                     ToastHelper.error(SituacionGuardiaActivity.this, "Error al guardar. Código: " + response.code());
                 }
             }

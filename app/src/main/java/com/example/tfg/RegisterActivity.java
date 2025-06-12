@@ -9,6 +9,8 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.tfg.Helpers.ToastHelper;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -20,13 +22,12 @@ public class RegisterActivity extends AppCompatActivity {
 
     EditText userField, passField;
     Button registerButton, backButton;
-    final String API_URL = "http://34.230.71.133/auth/register";
+    final String API_URL = "http://54.158.194.13/auth/register";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
-
         userField = findViewById(R.id.registerUserField);
         passField = findViewById(R.id.registerPassField);
         registerButton = findViewById(R.id.registerConfirmButton);

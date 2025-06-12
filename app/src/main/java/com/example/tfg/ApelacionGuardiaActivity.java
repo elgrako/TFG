@@ -1,15 +1,22 @@
 package com.example.tfg;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Switch;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.tfg.Helpers.NotificationHelper;
+import com.example.tfg.Helpers.ToastHelper;
 import com.example.tfg.api.ApiService;
 import com.example.tfg.api.RetrofitClient;
+import com.example.tfg.entities.ApelacionGuardia;
+
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -19,8 +26,8 @@ public class ApelacionGuardiaActivity extends AppCompatActivity {
 
     Switch switchAdmitido, switchPresentado, switchSentencia;
     EditText expedienteField;
-    Button guardarButton, cancelarButton;
-    int guardiaId;
+    Button guardarButton, cancelarButton, recursoButton;
+    Long guardiaId;
     Long apelacionId = null;
     ApiService apiService;
 
@@ -35,10 +42,11 @@ public class ApelacionGuardiaActivity extends AppCompatActivity {
         expedienteField = findViewById(R.id.nExpedienteApelacionField);
         guardarButton = findViewById(R.id.guardarApelacionGuardiaButton);
         cancelarButton = findViewById(R.id.cancelarApelacionGuardiaButton);
+        recursoButton = findViewById(R.id.irRecursoGuardiaButton);
 
         apiService = RetrofitClient.getInstance().getApi();
 
-        guardiaId = getIntent().getIntExtra("guardia_id", -1);
+        guardiaId = getIntent().getLongExtra("guardia_id", -1);
         if (guardiaId == -1) {
             ToastHelper.error(this, "Guardia no válida");
             finish();
@@ -61,29 +69,45 @@ public class ApelacionGuardiaActivity extends AppCompatActivity {
         guardarButton.setOnClickListener(v -> guardarApelacion());
 
         cancelarButton.setOnClickListener(v -> finish());
+
+        recursoButton.setOnClickListener(v -> {
+            Intent intent = new Intent(this, RecursoGuardiaActivity.class);
+            intent.putExtra("guardia_id", guardiaId);
+            startActivity(intent);
+        });
     }
 
     private void cargarApelacion() {
-        apiService.getApelacionByGuardiaId((long) guardiaId).enqueue(new Callback<ApelacionGuardia>() {
+        apiService.getApelacionByGuardiaId(guardiaId).enqueue(new Callback<List<ApelacionGuardia>>() {
             @Override
-            public void onResponse(Call<ApelacionGuardia> call, Response<ApelacionGuardia> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    ApelacionGuardia apelacion = response.body();
+            public void onResponse(Call<List<ApelacionGuardia>> call, Response<List<ApelacionGuardia>> response) {
+                if (response.isSuccessful() && response.body() != null && !response.body().isEmpty()) {
+                    ApelacionGuardia apelacion = response.body().get(0);
                     apelacionId = apelacion.getId();
 
                     expedienteField.setText(apelacion.getnExpediente());
                     actualizarEstadoSwitch(switchAdmitido, apelacion.isAdmitido(), "Admitido", "Rechazado");
                     actualizarEstadoSwitch(switchPresentado, apelacion.isPresentado(), "Presentado", "Pendiente");
                     actualizarEstadoSwitch(switchSentencia, apelacion.isSentencia(), "Sentencia", "Apelación");
+                    Log.d("LOAD_DEBUG", "Apelación cargada:");
+                    Log.d("LOAD_DEBUG", "ID: " + apelacion.getId());
+                    Log.d("LOAD_DEBUG", "Expediente: " + apelacion.getnExpediente());
+                    Log.d("LOAD_DEBUG", "Admitido: " + apelacion.isAdmitido());
+                    Log.d("LOAD_DEBUG", "Presentado: " + apelacion.isPresentado());
+                    Log.d("LOAD_DEBUG", "Sentencia: " + apelacion.isSentencia());
+
+                } else {
+                    ToastHelper.info(ApelacionGuardiaActivity.this, "No hay apelación registrada aún");
                 }
             }
 
             @Override
-            public void onFailure(Call<ApelacionGuardia> call, Throwable t) {
+            public void onFailure(Call<List<ApelacionGuardia>> call, Throwable t) {
                 ToastHelper.error(ApelacionGuardiaActivity.this, "Error al cargar datos: " + t.getMessage());
             }
         });
     }
+
 
     private void guardarApelacion() {
         String expediente = expedienteField.getText().toString().trim();
@@ -110,6 +134,9 @@ public class ApelacionGuardiaActivity extends AppCompatActivity {
         } else {
             call = apiService.createApelacion(apelacion);
         }
+        Log.d("SAVE_DEBUG", "Guardando apelación:");
+        Log.d("SAVE_DEBUG", "Expediente: " + expediente);
+
 
         call.enqueue(new Callback<ApelacionGuardia>() {
             @Override
@@ -122,7 +149,17 @@ public class ApelacionGuardiaActivity extends AppCompatActivity {
                     );
                     finish();
                 } else {
-                    ToastHelper.error(ApelacionGuardiaActivity.this, "Error al guardar apelación");
+                    String errorMsg = "";
+                    try {
+                        errorMsg = response.errorBody() != null ? response.errorBody().string() : "Sin mensaje";
+                    } catch (Exception e) {
+                        errorMsg = "Error leyendo el cuerpo de error";
+                    }
+
+                    Log.e("ApelacionGuardia", "Error al guardar: Código " + response.code() + " | Detalle: " + errorMsg);
+                    ToastHelper.error(ApelacionGuardiaActivity.this,
+                            "Error al guardar apelación\nCódigo: " + response.code() + "\n" + errorMsg);
+
                 }
             }
 

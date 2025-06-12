@@ -1,8 +1,9 @@
-package com.example.tfg;
+package com.example.tfg.entities;
 
 public class SituacionGuardia {
 
     private Long id;
+    private Long guardiaId;
     private Guardia guardia;
     private String comentarios;
     private String nTalon;
@@ -11,8 +12,9 @@ public class SituacionGuardia {
     private Boolean validado;
     private Boolean pagado;
 
-    public SituacionGuardia(Long id, Guardia guardia, String comentarios, String nTalon, String euros, Boolean presentado, Boolean validado, Boolean pagado) {
+    public SituacionGuardia(Long id, Long guardiaId, Guardia guardia, String comentarios, String nTalon, String euros, Boolean presentado, Boolean validado, Boolean pagado) {
         this.id = id;
+        this.guardiaId = guardiaId;
         this.guardia = guardia;
         this.comentarios = comentarios;
         this.nTalon = nTalon;
@@ -31,6 +33,22 @@ public class SituacionGuardia {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getGuardiaId() {
+        return guardiaId;
+    }
+
+    public void setGuardiaId(Long guardiaId) {
+        this.guardiaId = guardiaId;
+    }
+
+    public String getnTalon() {
+        return nTalon;
+    }
+
+    public void setnTalon(String nTalon) {
+        this.nTalon = nTalon;
     }
 
     public Guardia getGuardia() {

@@ -1,47 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp"
     android:background="@color/colorBackground">
 
-    <TextView
-        android:id="@+id/verGuardias"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="72dp"
-        android:text="@string/verGuardias"
-        android:textColor="@color/colorSecondary"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <TextView
-        android:id="@+id/verJudiciales"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/verJudiciales"
-        android:textColor="@color/colorPrimary"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintTop_toTopOf="@id/verGuardias"
-        app:layout_constraintEnd_toEndOf="parent" />
-
     <ListView
         android:id="@+id/listaGuardias"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="382dp"
+        android:layout_height="637dp"
         android:layout_marginTop="16dp"
         android:layout_marginBottom="16dp"
         android:background="@color/colorSurface"
         android:divider="@android:color/darker_gray"
         android:dividerHeight="1dp"
-        app:layout_constraintTop_toBottomOf="@id/verGuardias"
         app:layout_constraintBottom_toTopOf="@id/newGuardiaButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/verGuardias"
+        app:layout_constraintVertical_bias="0.846" />
+
+    <TextView
+        android:id="@+id/verGuardias"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="96dp"
+        android:text="@string/verGuardias"
+        android:textColor="@color/colorSecondary"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/verJudiciales"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="96dp"
+        android:text="@string/verJudiciales"
+        android:textColor="@color/colorPrimary"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/newGuardiaButton"

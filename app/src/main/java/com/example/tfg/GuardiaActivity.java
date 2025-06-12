@@ -13,9 +13,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.DatePickerDialog;
 
+import com.example.tfg.Helpers.NotificationHelper;
+import com.example.tfg.Helpers.ToastHelper;
 import com.example.tfg.api.RetrofitClient;
 import com.example.tfg.api.ApiService;
-import com.example.tfg.Guardia;
+import com.example.tfg.entities.Guardia;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -29,14 +31,14 @@ import retrofit2.Response;
 
 public class GuardiaActivity extends AppCompatActivity {
 
-    TextView diaField;
+    EditText diaActuacionField;
     EditText nombreAsistidoField;
     Switch porJuzgadoSwitch, cobradoSwitch;
     Button guardarButton;
     NotificationHelper nh;
     private ApiService apiService;
 
-    private Date selectedDate;
+    private Calendar selectedDate;
     private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
 
     @Override
@@ -47,24 +49,24 @@ public class GuardiaActivity extends AppCompatActivity {
         apiService = RetrofitClient.getInstance().getApi();
         nh = new NotificationHelper();
 
-        diaField = findViewById(R.id.diaActuacionField);
+        diaActuacionField = findViewById(R.id.diaActuacionField);
         nombreAsistidoField = findViewById(R.id.nombreAsistidoField);
         porJuzgadoSwitch = findViewById(R.id.switchporJuzgado);
         cobradoSwitch = findViewById(R.id.switchcobrado);
         guardarButton = findViewById(R.id.guardarGuardiaButton);
 
-        selectedDate = new Date();
-        diaField.setText(sdf.format(selectedDate));
+        selectedDate = Calendar.getInstance();
+        diaActuacionField.setText(sdf.format(selectedDate.getTime()));
 
-        diaField.setOnClickListener(v -> {
+        diaActuacionField.setOnClickListener(v -> {
             final Calendar calendar = Calendar.getInstance();
-            calendar.setTime(selectedDate);
+            calendar.setTime(selectedDate.getTime());
 
             new DatePickerDialog(this,
                     (view, year, month, dayOfMonth) -> {
                         calendar.set(year, month, dayOfMonth);
-                        selectedDate = calendar.getTime();
-                        diaField.setText(sdf.format(selectedDate));
+                        selectedDate = calendar;
+                        diaActuacionField.setText(sdf.format(selectedDate.getTime()));
                     },
                     calendar.get(Calendar.YEAR),
                     calendar.get(Calendar.MONTH),
@@ -93,21 +95,39 @@ public class GuardiaActivity extends AppCompatActivity {
             return;
         }
 
-        String diaActuacion = sdf.format(selectedDate);
+        // Validate date
+        if (selectedDate == null) {
+            ToastHelper.info(this, "Selecciona una fecha válida");
+            return;
+        }
+
+        String diaActuacion = sdf.format(selectedDate.getTime());
+        Log.d("Guardia", "Fecha seleccionada: " + diaActuacion);
+
         Guardia guardia = new Guardia();
         guardia.setNombreAsistido(nombre);
         guardia.setDiaActuacion(diaActuacion);
         guardia.setPorJuzgado(juzgado);
         guardia.setCobrado(cobrado);
 
+        // Log the complete guardia object
+        Log.d("Guardia", "Guardia a enviar: " +
+                "nombre: " + guardia.getNombreAsistido() +
+                ", fecha: " + guardia.getDiaActuacion() +
+                ", juzgado: " + guardia.isPorJuzgado() +
+                ", cobrado: " + guardia.isCobrado());
+
         apiService.createGuardia(guardia).enqueue(new Callback<Guardia>() {
             @Override
             public void onResponse(Call<Guardia> call, Response<Guardia> response) {
                 if (response.isSuccessful()) {
+                    Guardia creada = response.body();
+                    Log.d("Guardia", "Guardada con éxito: " + creada);
                     nh.Notification(GuardiaActivity.this, "Guardia registrada",
                             "Guardia guardada correctamente para " + nombre);
+
                     Intent intent = new Intent(GuardiaActivity.this, SituacionGuardiaActivity.class);
-                    intent.putExtra("nombreAsistido", nombre);
+                    intent.putExtra("guardia_id", creada.getId());
                     startActivity(intent);
                     finish();
                 } else {

@@ -1,4 +1,4 @@
-package com.example.tfg;
+package com.example.tfg.Helpers;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -9,6 +9,8 @@ import android.Manifest;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+
+import com.example.tfg.R;
 
 public class NotificationHelper {
 

@@ -1,17 +1,17 @@
-package com.example.tfg;
+package com.example.tfg.entities;
 
 import java.io.Serializable;
 
 public class RecursoExtraOrdinario implements Serializable {
     private Long id;
     private Long guardiaId;
-    private Integer nExpediente;
+    private String nExpediente;
     private Boolean admitido;
 
     public RecursoExtraOrdinario() {
     }
 
-    public RecursoExtraOrdinario(Long id, Long guardiaId, Integer nExpediente, Boolean admitido) {
+    public RecursoExtraOrdinario(Long id, Long guardiaId, String nExpediente, Boolean admitido) {
         this.id = id;
         this.guardiaId = guardiaId;
         this.nExpediente = nExpediente;
@@ -34,11 +34,11 @@ public class RecursoExtraOrdinario implements Serializable {
         this.guardiaId = guardiaId;
     }
 
-    public Integer getnExpediente() {
+    public String getnExpediente() {
         return nExpediente;
     }
 
-    public void setnExpediente(Integer nExpediente) {
+    public void setnExpediente(String nExpediente) {
         this.nExpediente = nExpediente;
     }
 

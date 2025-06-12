@@ -8,8 +8,10 @@ import android.widget.EditText;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.tfg.Helpers.ToastHelper;
 import com.example.tfg.api.RetrofitClient;
 import com.example.tfg.api.ApiService;
+import com.example.tfg.entities.Registro;
 
 import java.io.IOException;
 

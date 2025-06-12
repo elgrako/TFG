@@ -3,6 +3,7 @@ package com.example.tfg;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -12,8 +13,12 @@ import android.widget.*;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.tfg.Helpers.NotificationHelper;
+import com.example.tfg.Helpers.PreferenciasHelper;
+import com.example.tfg.Helpers.ToastHelper;
 import com.example.tfg.api.ApiService;
 import com.example.tfg.api.RetrofitClient;
+import com.example.tfg.entities.Guardia;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -78,6 +83,10 @@ public class MainGuardiaActivity extends AppCompatActivity {
                     listaGuardias.clear();
                     listaGuardias.addAll(response.body());
 
+                    for (Guardia g : listaGuardias) {
+                        Log.d("GUARDIA_DEBUG", "Nombre: " + g.getNombreAsistido() + " | Fecha: " + g.getDiaActuacion());
+                    }
+
                     adapter = new GuardiaAdapter(MainGuardiaActivity.this, listaGuardias);
                     listViewGuardias.setAdapter(adapter);
                 } else {
@@ -121,7 +130,7 @@ public class MainGuardiaActivity extends AppCompatActivity {
         int position = info.position;
 
         if (position <= 0 || position - 1 >= listaGuardias.size()) {
-            ToastHelper.error(this, "Guardia inválida");
+            ToastHelper.error(this, "Guardia invalida");
             return false;
         }
 

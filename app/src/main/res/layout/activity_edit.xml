@@ -13,91 +13,33 @@
         android:id="@+id/nameEditField"
         android:layout_width="0dp"
         android:layout_height="52dp"
-        android:layout_marginTop="44dp"
+        android:layout_marginTop="160dp"
         android:backgroundTint="@color/colorPrimary"
         android:hint="@string/nombreEdit"
         android:inputType="textPersonName"
         android:padding="12dp"
         android:textColor="@color/colorTextPrimary"
         android:textColorHint="@color/colorTextSecondary"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/dniEditField"
         android:layout_width="0dp"
         android:layout_height="52dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="28dp"
         android:backgroundTint="@color/colorPrimary"
         android:hint="@string/dniEdit"
         android:inputType="text"
         android:padding="12dp"
         android:textColor="@color/colorTextPrimary"
         android:textColorHint="@color/colorTextSecondary"
-        app:layout_constraintTop_toBottomOf="@id/nameEditField"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <EditText
-        android:id="@+id/nExpedienteEditField"
-        android:layout_width="0dp"
-        android:layout_height="52dp"
-        android:layout_marginTop="16dp"
-        android:backgroundTint="@color/colorPrimary"
-        android:hint="@string/nExpedienteEdit"
-        android:inputType="text"
-        android:padding="12dp"
-        android:textColor="@color/colorTextPrimary"
-        android:textColorHint="@color/colorTextSecondary"
-        app:layout_constraintTop_toBottomOf="@id/dniEditField"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <EditText
-        android:id="@+id/eurosEditField"
-        android:layout_width="0dp"
-        android:layout_height="52dp"
-        android:layout_marginTop="16dp"
-        android:backgroundTint="@color/colorPrimary"
-        android:hint="@string/euros1"
-        android:inputType="numberDecimal"
-        android:padding="12dp"
-        android:textColor="@color/colorTextPrimary"
-        android:textColorHint="@color/colorTextSecondary"
-        app:layout_constraintTop_toBottomOf="@id/nExpedienteEditField"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <EditText
-        android:id="@+id/telefonoEditField"
-        android:layout_width="0dp"
-        android:layout_height="52dp"
-        android:layout_marginTop="16dp"
-        android:backgroundTint="@color/colorPrimary"
-        android:hint="@string/telefonoEdit"
-        android:inputType="phone"
-        android:padding="12dp"
-        android:textColor="@color/colorTextPrimary"
-        android:textColorHint="@color/colorTextSecondary"
-        app:layout_constraintTop_toBottomOf="@id/eurosEditField"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <EditText
-        android:id="@+id/emailEditField"
-        android:layout_width="0dp"
-        android:layout_height="52dp"
-        android:layout_marginTop="16dp"
-        android:backgroundTint="@color/colorPrimary"
-        android:hint="@string/emailEdit"
-        android:inputType="textEmailAddress"
-        android:padding="12dp"
-        android:textColor="@color/colorTextPrimary"
-        android:textColorHint="@color/colorTextSecondary"
-        app:layout_constraintTop_toBottomOf="@id/telefonoEditField"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/nameEditField" />
 
     <Button
         android:id="@+id/nextEditButton"
@@ -107,9 +49,9 @@
         android:backgroundTint="@color/colorPrimary"
         android:text="@string/siguienteEditbtn"
         android:textColor="@color/colorOnPrimary"
-        app:layout_constraintTop_toBottomOf="@id/emailEditField"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/backEditButton"
+        app:layout_constraintTop_toBottomOf="@id/emailEditField"
         app:layout_constraintWidth_percent="0.48" />
 
     <Button
@@ -120,9 +62,73 @@
         android:backgroundTint="@color/colorSecondary"
         android:text="@string/volverEditbtn"
         android:textColor="@color/colorOnPrimary"
-        app:layout_constraintTop_toBottomOf="@id/emailEditField"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/nextEditButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/emailEditField"
         app:layout_constraintWidth_percent="0.48" />
+
+    <EditText
+        android:id="@+id/nExpedienteEditField"
+        android:layout_width="0dp"
+        android:layout_height="52dp"
+        android:layout_marginTop="4dp"
+        android:backgroundTint="@color/colorPrimary"
+        android:hint="@string/nExpedienteEdit"
+        android:inputType="text"
+        android:padding="12dp"
+        android:textColor="@color/colorTextPrimary"
+        android:textColorHint="@color/colorTextSecondary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/dniEditField" />
+
+    <EditText
+        android:id="@+id/emailEditField"
+        android:layout_width="0dp"
+        android:layout_height="52dp"
+        android:layout_marginTop="36dp"
+        android:backgroundTint="@color/colorPrimary"
+        android:hint="@string/emailEdit"
+        android:inputType="textEmailAddress"
+        android:padding="12dp"
+        android:textColor="@color/colorTextPrimary"
+        android:textColorHint="@color/colorTextSecondary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/telefonoEditField" />
+
+    <EditText
+        android:id="@+id/telefonoEditField"
+        android:layout_width="0dp"
+        android:layout_height="52dp"
+        android:layout_marginTop="24dp"
+        android:backgroundTint="@color/colorPrimary"
+        android:hint="@string/telefonoEdit"
+        android:inputType="phone"
+        android:padding="12dp"
+        android:textColor="@color/colorTextPrimary"
+        android:textColorHint="@color/colorTextSecondary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/eurosEditField" />
+
+    <EditText
+        android:id="@+id/eurosEditField"
+        android:layout_width="0dp"
+        android:layout_height="52dp"
+        android:layout_marginTop="8dp"
+        android:backgroundTint="@color/colorPrimary"
+        android:hint="@string/euros1"
+        android:inputType="numberDecimal"
+        android:padding="12dp"
+        android:textColor="@color/colorTextPrimary"
+        android:textColorHint="@color/colorTextSecondary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/nExpedienteEditField" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

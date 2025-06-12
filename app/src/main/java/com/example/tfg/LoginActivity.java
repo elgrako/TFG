@@ -10,6 +10,9 @@ import android.widget.EditText;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.tfg.Helpers.PreferenciasHelper;
+import com.example.tfg.Helpers.ToastHelper;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -21,7 +24,7 @@ public class LoginActivity extends AppCompatActivity {
 
     EditText userField, passField;
     Button loginButton, registerButton;
-    final String API_URL = "http://34.230.71.133/auth/login";
+    final String API_URL = "http://54.158.194.13/auth/login";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +78,7 @@ public class LoginActivity extends AppCompatActivity {
                     public void onResponse(Call call, Response response) throws IOException {
                         if (response.isSuccessful()) {
                             String responseBody = response.body().string();
+                            Log.d("LoginActivity", "Respuesta del servidor: " + responseBody);
                             JSONObject responseJson = null;
                             try {
                                 responseJson = new JSONObject(responseBody);
@@ -84,6 +88,7 @@ public class LoginActivity extends AppCompatActivity {
                             String token = null;
                             try {
                                 token = responseJson.getString("token");
+                                Log.d("LoginActivity", "Token recibido: " + token);
                             } catch (JSONException e) {
                                 throw new RuntimeException(e);
                             }

@@ -1,13 +1,13 @@
-package com.example.tfg;
+package com.example.tfg.entities;
 
 public class Guardia {
-    private int id;
+    private Long id;
     private String nombreAsistido;
     private String diaActuacion;
     private boolean porJuzgado;
     private boolean cobrado;
 
-    public Guardia(int id, String nombreAsistido, String diaActuacion, boolean porJuzgado, boolean cobrado) {
+    public Guardia(Long id, String nombreAsistido, String diaActuacion, boolean porJuzgado, boolean cobrado) {
         this.id = id;
         this.nombreAsistido = nombreAsistido;
         this.diaActuacion = diaActuacion;
@@ -18,11 +18,11 @@ public class Guardia {
     public Guardia() {
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

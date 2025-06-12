@@ -1,10 +1,13 @@
-package com.example.tfg;
+package com.example.tfg.entities;
 
 import java.io.Serializable;
+
+import com.google.gson.annotations.SerializedName;
 
 public class RecursoGuardia implements Serializable {
     private Long id;
     private Long guardiaId;
+    @SerializedName("nExpediente")
     private String nExpediente;
     private Boolean resuelto;
 

@@ -8,8 +8,11 @@ import android.widget.*;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.tfg.Helpers.NotificationHelper;
+import com.example.tfg.Helpers.ToastHelper;
 import com.example.tfg.api.ApiService;
 import com.example.tfg.api.RetrofitClient;
+import com.example.tfg.entities.Registro;
 
 import retrofit2.Call;
 import retrofit2.Callback;

@@ -1,4 +1,4 @@
-package com.example.tfg;
+package com.example.tfg.Helpers;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -6,6 +6,8 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.tfg.R;
 
 public class ToastHelper {
 

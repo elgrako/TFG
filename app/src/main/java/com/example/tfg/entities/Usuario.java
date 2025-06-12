@@ -1,4 +1,4 @@
-package com.example.tfg;
+package com.example.tfg.entities;
 
 public class Usuario {
     private int id;
