@@ -9,8 +9,8 @@
 
     <ListView
         android:id="@+id/listaGuardias"
-        android:layout_width="382dp"
-        android:layout_height="637dp"
+        android:layout_width="381dp"
+        android:layout_height="533dp"
         android:layout_marginTop="16dp"
         android:layout_marginBottom="16dp"
         android:background="@color/colorSurface"
@@ -27,7 +27,7 @@
         android:id="@+id/verGuardias"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="96dp"
+        android:layout_marginTop="44dp"
         android:text="@string/verGuardias"
         android:textColor="@color/colorSecondary"
         android:textSize="18sp"
@@ -39,7 +39,7 @@
         android:id="@+id/verJudiciales"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="96dp"
+        android:layout_marginTop="44dp"
         android:text="@string/verJudiciales"
         android:textColor="@color/colorPrimary"
         android:textSize="18sp"

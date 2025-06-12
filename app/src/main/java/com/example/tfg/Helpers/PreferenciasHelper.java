@@ -8,6 +8,7 @@ public class PreferenciasHelper {
     private static final String PREF_NAME = "tfgPreferences";
     private static final String KEY_USUARIO = "userActivo";
     private static final String KEY_TOKEN = "userToken";
+    private static final String KEY_NOTIFICACIONES = "notificacionesHabilitadas";
 
 
     public static void guardarSesion(Context context, String usuario, String token) {
@@ -38,6 +39,7 @@ public class PreferenciasHelper {
         prefs.edit()
                 .remove(KEY_USUARIO)
                 .remove(KEY_TOKEN)
+                .remove(KEY_NOTIFICACIONES)
                 .apply();
     }
 
@@ -45,5 +47,15 @@ public class PreferenciasHelper {
         SharedPreferences prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         return prefs.getString(KEY_USUARIO, null) != null &&
                 prefs.getString(KEY_TOKEN, null) != null;
+    }
+
+    public static void guardarNotificaciones(Context context, boolean habilitadas) {
+        SharedPreferences prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        prefs.edit().putBoolean(KEY_NOTIFICACIONES, habilitadas).apply();
+    }
+
+    public static boolean obtenerNotificaciones(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        return prefs.getBoolean(KEY_NOTIFICACIONES, true); // Por defecto true
     }
 }

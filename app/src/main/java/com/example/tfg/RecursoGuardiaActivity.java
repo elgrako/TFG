@@ -176,7 +176,7 @@ public class RecursoGuardiaActivity extends AppCompatActivity {
                 @Override
                 public void onFailure(Call<RecursoGuardia> call, Throwable t) {
                     Log.e("RecursoGuardia", "Fallo de red: " + t.getMessage(), t);
-                    ToastHelper.error(RecursoGuardiaActivity.this, "Fallo de red al crear: " + t.getMessage());
+                    //ToastHelper.error(RecursoGuardiaActivity.this, "Fallo de red al crear: " + t.getMessage());
                 }
             });
         }

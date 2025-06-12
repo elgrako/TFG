@@ -1,14 +1,21 @@
 package com.example.tfg;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.Manifest;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import com.example.tfg.Helpers.PreferenciasHelper;
 import com.example.tfg.Helpers.ToastHelper;
+import com.example.tfg.Helpers.NotificationHelper;
 import com.example.tfg.api.RetrofitClient;
 import com.example.tfg.api.ApiService;
 import com.example.tfg.entities.Registro;
@@ -29,6 +36,8 @@ public class EditActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit);
+
+        solicitarPermisoNotificaciones();
 
         apiService = RetrofitClient.getInstance().getApi();
 
@@ -109,8 +118,14 @@ public class EditActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<Registro> call, Response<Registro> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    ToastHelper.info(EditActivity.this, "Registro creado");
+                    if (!PreferenciasHelper.obtenerNotificaciones(EditActivity.this)) {
+                        solicitarPermisoNotificaciones();
+                        return;
+                    }
+
                     Registro creado = response.body();
+                    NotificationHelper.Notification(EditActivity.this, "Registro creado",
+                            "Registro creado correctamente para " + creado.getNombre());
                     irSituacion1(creado.getNombre(), creado.getEuros());
                 } else {
                     String error = "";
@@ -120,7 +135,8 @@ public class EditActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
                     Log.e("Registro-ERROR", "Código: " + response.code() + ", Respuesta: " + error);
-                    ToastHelper.error(EditActivity.this, "Error al crear registro. Código: " + response.code());
+                    NotificationHelper.Notification(EditActivity.this, "Error en registro",
+                            "Error al crear registro. Código: " + response.code());
                 }
             }
 
@@ -128,6 +144,8 @@ public class EditActivity extends AppCompatActivity {
             public void onFailure(Call<Registro> call, Throwable t) {
                 Log.e("Registro-FALLO", "Fallo de red: " + t.getMessage(), t);
                 ToastHelper.error(EditActivity.this, "Fallo de red: " + t.getMessage());
+                NotificationHelper.Notification(EditActivity.this, "Error de red",
+                        "Fallo de red al crear registro: " + t.getMessage());
             }
         });
     }
@@ -138,10 +156,17 @@ public class EditActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<Registro> call, Response<Registro> response) {
                 if (response.isSuccessful()) {
-                    ToastHelper.info(EditActivity.this, "Registro actualizado");
+                    if (!PreferenciasHelper.obtenerNotificaciones(EditActivity.this)) {
+                        solicitarPermisoNotificaciones();
+                        return;
+                    }
+
+                    NotificationHelper.Notification(EditActivity.this, "Registro actualizado",
+                            "Registro actualizado correctamente");
                     irSituacion1(registro.getNombre(), registro.getEuros());
                 } else {
-                    ToastHelper.error(EditActivity.this, "Error al actualizar registro");
+                    NotificationHelper.Notification(EditActivity.this, "Error al actualizar",
+                            "Error al actualizar el registro");
                 }
             }
 
@@ -150,6 +175,44 @@ public class EditActivity extends AppCompatActivity {
                 ToastHelper.error(EditActivity.this, "Fallo de red: " + t.getMessage());
             }
         });
+    }
+
+    private void solicitarPermisoNotificaciones() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+                    != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.POST_NOTIFICATIONS},
+                        1001);
+            }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == 1001) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                PreferenciasHelper.guardarNotificaciones(this, true);
+            } else {
+                mostrarDialogoExplicacionNotificaciones();
+            }
+        }
+    }
+
+    private void mostrarDialogoExplicacionNotificaciones() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(EditActivity.this);
+        builder.setTitle("Notificaciones")
+                .setMessage("Para recibir notificaciones sobre los registros, necesitas habilitarlas en los ajustes")
+                .setPositiveButton("Ir a Ajustes", (dialog, which) -> {
+                    Intent intent = new Intent();
+                    intent.setAction("android.settings.APP_NOTIFICATION_SETTINGS");
+                    intent.putExtra("android.provider.extra.APP_PACKAGE", getPackageName());
+                    startActivity(intent);
+                })
+                .setNegativeButton("Cancelar", (dialog, which) -> dialog.dismiss());
+        builder.create().show();
     }
 
     private void irSituacion1(String nombre, double euros) {

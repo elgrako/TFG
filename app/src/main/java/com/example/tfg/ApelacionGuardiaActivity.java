@@ -165,7 +165,7 @@ public class ApelacionGuardiaActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<ApelacionGuardia> call, Throwable t) {
-                ToastHelper.error(ApelacionGuardiaActivity.this, "Fallo de red: " + t.getMessage());
+                //ToastHelper.error(ApelacionGuardiaActivity.this, "Fallo de red: " + t.getMessage());
             }
         });
     }

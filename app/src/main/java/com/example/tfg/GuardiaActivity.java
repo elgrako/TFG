@@ -1,5 +1,6 @@
 package com.example.tfg;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -62,7 +63,7 @@ public class GuardiaActivity extends AppCompatActivity {
             final Calendar calendar = Calendar.getInstance();
             calendar.setTime(selectedDate.getTime());
 
-            new DatePickerDialog(this,
+            DatePickerDialog datePickerDialog = new DatePickerDialog(this,
                     (view, year, month, dayOfMonth) -> {
                         calendar.set(year, month, dayOfMonth);
                         selectedDate = calendar;
@@ -70,7 +71,12 @@ public class GuardiaActivity extends AppCompatActivity {
                     },
                     calendar.get(Calendar.YEAR),
                     calendar.get(Calendar.MONTH),
-                    calendar.get(Calendar.DAY_OF_MONTH)).show();
+                    calendar.get(Calendar.DAY_OF_MONTH));
+
+            datePickerDialog.getDatePicker().setCalendarViewShown(true);
+            datePickerDialog.getDatePicker().setSpinnersShown(false);
+
+            datePickerDialog.show();
         });
 
         actualizarEstadoSwitch(porJuzgadoSwitch, false, "Sí por pasa Juzgado", "No por por Juzgado");
@@ -110,7 +116,6 @@ public class GuardiaActivity extends AppCompatActivity {
         guardia.setPorJuzgado(juzgado);
         guardia.setCobrado(cobrado);
 
-        // Log the complete guardia object
         Log.d("Guardia", "Guardia a enviar: " +
                 "nombre: " + guardia.getNombreAsistido() +
                 ", fecha: " + guardia.getDiaActuacion() +
@@ -123,8 +128,9 @@ public class GuardiaActivity extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     Guardia creada = response.body();
                     Log.d("Guardia", "Guardada con éxito: " + creada);
-                    nh.Notification(GuardiaActivity.this, "Guardia registrada",
+                    NotificationHelper.Notification(GuardiaActivity.this, "Guardia registrada",
                             "Guardia guardada correctamente para " + nombre);
+                    ToastHelper.info(GuardiaActivity.this, "Guardia guardada correctamente");
 
                     Intent intent = new Intent(GuardiaActivity.this, SituacionGuardiaActivity.class);
                     intent.putExtra("guardia_id", creada.getId());
@@ -138,6 +144,8 @@ public class GuardiaActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
                     Log.e("Guardia-ERROR", "Código: " + response.code() + ", Respuesta: " + error);
+                    NotificationHelper.Notification(GuardiaActivity.this, "Error en guardia",
+                            "Error al guardar la guardia. Código: " + response.code());
                     ToastHelper.error(GuardiaActivity.this, "Error al guardar guardia. Código: " + response.code());
                 }
             }
@@ -145,6 +153,8 @@ public class GuardiaActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<Guardia> call, Throwable t) {
                 Log.e("Guardia-FALLO", "Fallo de red: " + t.getMessage(), t);
+                NotificationHelper.Notification(GuardiaActivity.this, "Error de red",
+                        "Fallo de red al guardar la guardia: " + t.getMessage());
                 ToastHelper.error(GuardiaActivity.this, "Fallo de red: " + t.getMessage());
             }
         });
