@@ -7,13 +7,13 @@
     android:layout_height="match_parent"
     android:background="@color/colorBackground"
     android:padding="24dp"
-    tools:context=".GuardiaActivity">
+    tools:context=".ui.GuardiaActivity">
 
     <EditText
         android:id="@+id/diaActuacionField"
         android:layout_width="0dp"
         android:layout_height="50dp"
-        android:layout_marginTop="144dp"
+        android:layout_marginTop="80dp"
         android:backgroundTint="@color/colorPrimary"
         android:hint="@string/diaActuacion"
         android:inputType="date"
@@ -25,27 +25,27 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Switch
-        android:id="@+id/switchcobrado"
+    <EditText
+        android:id="@+id/nombreAsistidoField"
         android:layout_width="0dp"
-        android:layout_height="60dp"
-        android:layout_marginTop="16dp"
-        android:paddingStart="8dp"
-        android:text="@string/cobradoGuardia"
-        android:textColor="@color/colorTextSecondary"
-        android:textSize="18sp"
-        android:textStyle="bold"
+        android:layout_height="50dp"
+        android:layout_marginTop="28dp"
+        android:backgroundTint="@color/colorPrimary"
+        android:hint="@string/nombreAsistido"
+        android:inputType="textPersonName"
+        android:padding="12dp"
+        android:textColor="@color/colorTextPrimary"
+        android:textColorHint="@color/colorTextSecondary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/switchporJuzgado"
-        tools:ignore="UseSwitchCompatOrMaterialXml" />
+        app:layout_constraintTop_toBottomOf="@id/diaActuacionField" />
 
     <Switch
         android:id="@+id/switchporJuzgado"
         android:layout_width="0dp"
         android:layout_height="60dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="52dp"
         android:paddingStart="8dp"
         android:text="@string/porJuzgado"
         android:textColor="@color/colorTextSecondary"
@@ -57,33 +57,33 @@
         app:layout_constraintTop_toBottomOf="@id/nombreAsistidoField"
         tools:ignore="UseSwitchCompatOrMaterialXml" />
 
+    <Switch
+        android:id="@+id/switchcobrado"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="28dp"
+        android:paddingStart="8dp"
+        android:text="@string/cobradoGuardia"
+        android:textColor="@color/colorTextSecondary"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/switchporJuzgado"
+        tools:ignore="UseSwitchCompatOrMaterialXml" />
+
     <Button
         android:id="@+id/guardarGuardiaButton"
         android:layout_width="0dp"
         android:layout_height="52dp"
-        android:layout_marginTop="120dp"
+        android:layout_marginTop="168dp"
         android:backgroundTint="@color/colorPrimary"
         android:text="@string/guardarGuardiaBtn"
         android:textColor="@color/colorOnPrimary"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/switchcobrado" />
-
-    <EditText
-        android:id="@+id/nombreAsistidoField"
-        android:layout_width="0dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="24dp"
-        android:backgroundTint="@color/colorPrimary"
-        android:hint="@string/nombreAsistido"
-        android:inputType="textPersonName"
-        android:padding="12dp"
-        android:textColor="@color/colorTextPrimary"
-        android:textColorHint="@color/colorTextSecondary"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/diaActuacionField" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

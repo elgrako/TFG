@@ -1,4 +1,4 @@
-package com.example.tfg.api;
+/*package com.example.tfg.api;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -77,3 +77,5 @@ public class RetrofitClient {
         return api;
     }
 }
+
+ */

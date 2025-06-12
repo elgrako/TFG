@@ -7,13 +7,13 @@
     android:layout_height="match_parent"
     android:background="@color/colorBackground"
     android:padding="24dp"
-    tools:context=".EditActivity">
+    tools:context=".ui.EditActivity">
 
     <EditText
         android:id="@+id/nameEditField"
         android:layout_width="0dp"
         android:layout_height="52dp"
-        android:layout_marginTop="160dp"
+        android:layout_marginTop="64dp"
         android:backgroundTint="@color/colorPrimary"
         android:hint="@string/nombreEdit"
         android:inputType="textPersonName"
@@ -29,7 +29,7 @@
         android:id="@+id/dniEditField"
         android:layout_width="0dp"
         android:layout_height="52dp"
-        android:layout_marginTop="28dp"
+        android:layout_marginTop="20dp"
         android:backgroundTint="@color/colorPrimary"
         android:hint="@string/dniEdit"
         android:inputType="text"
@@ -41,47 +41,21 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/nameEditField" />
 
-    <Button
-        android:id="@+id/nextEditButton"
-        android:layout_width="0dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="32dp"
-        android:backgroundTint="@color/colorPrimary"
-        android:text="@string/siguienteEditbtn"
-        android:textColor="@color/colorOnPrimary"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/backEditButton"
-        app:layout_constraintTop_toBottomOf="@id/emailEditField"
-        app:layout_constraintWidth_percent="0.48" />
-
-    <Button
-        android:id="@+id/backEditButton"
-        android:layout_width="0dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="32dp"
-        android:backgroundTint="@color/colorSecondary"
-        android:text="@string/volverEditbtn"
-        android:textColor="@color/colorOnPrimary"
-        app:layout_constraintEnd_toStartOf="@+id/nextEditButton"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/emailEditField"
-        app:layout_constraintWidth_percent="0.48" />
-
     <EditText
-        android:id="@+id/nExpedienteEditField"
+        android:id="@+id/telefonoEditField"
         android:layout_width="0dp"
         android:layout_height="52dp"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="20dp"
         android:backgroundTint="@color/colorPrimary"
-        android:hint="@string/nExpedienteEdit"
-        android:inputType="text"
+        android:hint="@string/telefonoEdit"
+        android:inputType="phone"
         android:padding="12dp"
         android:textColor="@color/colorTextPrimary"
         android:textColorHint="@color/colorTextSecondary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/dniEditField" />
+        app:layout_constraintTop_toBottomOf="@id/eurosEditField" />
 
     <EditText
         android:id="@+id/emailEditField"
@@ -100,26 +74,26 @@
         app:layout_constraintTop_toBottomOf="@id/telefonoEditField" />
 
     <EditText
-        android:id="@+id/telefonoEditField"
+        android:id="@+id/nExpedienteEditField"
         android:layout_width="0dp"
         android:layout_height="52dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="16dp"
         android:backgroundTint="@color/colorPrimary"
-        android:hint="@string/telefonoEdit"
-        android:inputType="phone"
+        android:hint="@string/nExpedienteEdit"
+        android:inputType="text"
         android:padding="12dp"
         android:textColor="@color/colorTextPrimary"
         android:textColorHint="@color/colorTextSecondary"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/eurosEditField" />
+        app:layout_constraintTop_toBottomOf="@id/dniEditField" />
 
     <EditText
         android:id="@+id/eurosEditField"
         android:layout_width="0dp"
         android:layout_height="52dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:backgroundTint="@color/colorPrimary"
         android:hint="@string/euros1"
         android:inputType="numberDecimal"
@@ -127,8 +101,34 @@
         android:textColor="@color/colorTextPrimary"
         android:textColorHint="@color/colorTextSecondary"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/nExpedienteEditField" />
+
+    <Button
+        android:id="@+id/nextEditButton"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="104dp"
+        android:backgroundTint="@color/colorPrimary"
+        android:text="@string/siguienteEditbtn"
+        android:textColor="@color/colorOnPrimary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/backEditButton"
+        app:layout_constraintTop_toBottomOf="@id/emailEditField"
+        app:layout_constraintWidth_percent="0.48" />
+
+    <Button
+        android:id="@+id/backEditButton"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="104dp"
+        android:backgroundTint="@color/colorSecondary"
+        android:text="@string/volverEditbtn"
+        android:textColor="@color/colorOnPrimary"
+        app:layout_constraintEnd_toStartOf="@+id/nextEditButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/emailEditField"
+        app:layout_constraintWidth_percent="0.48" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

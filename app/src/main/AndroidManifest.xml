@@ -2,8 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
         android:name=".Helpers.MyApp"
@@ -18,38 +20,36 @@
         android:theme="@style/Theme.AppCompat.DayNight.DarkActionBar"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
-        <activity
-            android:name=".WebSocketActivity"
-            android:exported="false" />
+
         <activity
             android:name=".MultimediaActivity"
             android:exported="false" />
         <activity
-            android:name=".RecursoExtraOrdinarioActivity"
+            android:name=".ui.RecursoExtraOrdinarioActivity"
             android:exported="false" />
         <activity
-            android:name=".RecursoGuardiaActivity"
+            android:name=".ui.RecursoGuardiaActivity"
             android:exported="false" />
         <activity
-            android:name=".ApelacionGuardiaActivity"
+            android:name=".ui.ApelacionGuardiaActivity"
             android:exported="false" />
         <activity
-            android:name=".SituacionGuardiaActivity"
+            android:name=".ui.SituacionGuardiaActivity"
             android:exported="false" />
         <activity
-            android:name=".MainGuardiaActivity"
+            android:name=".ui.MainGuardiaActivity"
             android:exported="false" />
         <activity
-            android:name=".RegisterActivity"
+            android:name=".ui.RegisterActivity"
             android:exported="false" />
         <activity
-            android:name=".LoginActivity"
+            android:name=".ui.LoginActivity"
             android:exported="false" />
         <activity
-            android:name=".GuardiaActivity"
+            android:name=".ui.GuardiaActivity"
             android:exported="false" />
         <activity
-            android:name=".SplashActivity"
+            android:name=".ui.SplashActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -58,13 +58,16 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.MainActivity"
             android:exported="false" />
         <activity
-            android:name=".EditActivity"
+            android:name=".ui.EditActivity"
             android:exported="false" />
         <activity
-            android:name=".Situacion1Activity"
+            android:name=".ui.Situacion1Activity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.ManualActivity"
             android:exported="false" />
     </application>
 

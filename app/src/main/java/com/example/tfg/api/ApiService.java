@@ -1,12 +1,12 @@
 package com.example.tfg.api;
 
-import com.example.tfg.entities.ApelacionGuardia;
-import com.example.tfg.entities.Guardia;
-import com.example.tfg.entities.RecursoExtraOrdinario;
-import com.example.tfg.entities.RecursoGuardia;
-import com.example.tfg.entities.Registro;
-import com.example.tfg.entities.SituacionGuardia;
-import com.example.tfg.entities.Usuario;
+import com.example.tfg.local.entity.ApelacionGuardia;
+import com.example.tfg.local.entity.Guardia;
+import com.example.tfg.local.entity.RecursoExtraOrdinario;
+import com.example.tfg.local.entity.RecursoGuardia;
+import com.example.tfg.local.entity.Registro;
+import com.example.tfg.local.entity.SituacionGuardia;
+import com.example.tfg.local.entity.Usuario;
 
 import java.util.List;
 import java.util.Map;

@@ -14,40 +14,47 @@ import com.example.tfg.R;
 
 public class NotificationHelper {
 
-    private static final String CHANNEL_ID = "canal-main";
-    private static final String CHANNEL_NAME = "Notificaciones";
-    private static final String CHANNEL_DESC = "Canal general de la aplicacion";
-
+    private static final String CHANNEL_ID = "tfg-notificaciones";
+    private static final String CHANNEL_NAME = "Notificaciones TFG";
+    private static final String CHANNEL_DESC = "Canal de notificaciones para la aplicación TFG";
+    private static final int NOTIFICATION_ID = 1001;
 
     public static void Notification(Context context, String titulo, String mensaje) {
         crearCanal(context);
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                ToastHelper.info(context, "No se pueden mostrar notificaciones. Acepta los permisos en la configuración");
+                return;
+            }
+        }
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
                 .setSmallIcon(R.mipmap.iconlogo)
                 .setContentTitle(titulo)
                 .setContentText(mensaje)
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setAutoCancel(true);
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
 
-
-        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
-            notificationManager.notify((int) System.currentTimeMillis(), builder.build());
-        }
+        notificationManager.notify(NOTIFICATION_ID, builder.build());
     }
 
 
     private static void crearCanal(Context context) {
-        NotificationChannel canal = new NotificationChannel(
-                CHANNEL_ID,
-                CHANNEL_NAME,
-                NotificationManager.IMPORTANCE_DEFAULT
-        );
-        canal.setDescription(CHANNEL_DESC);
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            NotificationChannel canal = new NotificationChannel(
+                    CHANNEL_ID,
+                    CHANNEL_NAME,
+                    NotificationManager.IMPORTANCE_DEFAULT
+            );
+            canal.setDescription(CHANNEL_DESC);
 
-        NotificationManager manager = context.getSystemService(NotificationManager.class);
-        if (manager != null) {
-            manager.createNotificationChannel(canal);
+            NotificationManager manager = context.getSystemService(NotificationManager.class);
+            if (manager != null) {
+                manager.createNotificationChannel(canal);
+            }
         }
     }
 }
