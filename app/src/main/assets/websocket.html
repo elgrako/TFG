@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Demo</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.0/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs/lib/stomp.min.js"></script>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 0;
+            background-color: #f9f9f9;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            padding: 24px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            width: 90%;
+            max-width: 400px;
+        }
+
+        h1 {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        input, button {
+            font-size: 18px;
+            padding: 12px;
+            margin: 10px 0;
+            width: 100%;
+            box-sizing: border-box;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        button {
+            background-color: #2196F3;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #1976D2;
+        }
+
+        #respuesta {
+            margin-top: 20px;
+            background: #e1f5fe;
+            border: 1px solid #90caf9;
+            padding: 16px;
+            border-radius: 4px;
+            color: #0277bd;
+            min-height: 50px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>WebSocket Android</h1>
+    <input type="text" id="mensaje" placeholder="Escribe un mensaje">
+    <button onclick="enviarMensaje()">Enviar</button>
+    <div id="respuesta">Esperando mensajes...</div>
+</div>
+
+<script>
+    var socket = new SockJS('http://54.158.194.13:5000/ws');
+    var stompClient = Stomp.over(socket);
+
+   stompClient.connect({}, function (frame) {
+    console.log(' Conectado: ' + frame);
+    stompClient.subscribe('/topic/respuesta', function (respuesta) {
+        document.getElementById('respuesta').innerText = respuesta.body;
+    });
+    }, function (error) {
+    console.error(' Error de conexión WebSocket:', error);
+    document.getElementById('respuesta').innerText = ' Error de conexión WebSocket: ' + error;
+    });
+
+    function enviarMensaje() {
+        var mensaje = document.getElementById('mensaje').value;
+        stompClient.send("/app/mensaje", {}, mensaje);
+    }
+</script>
+</body>
+</html>

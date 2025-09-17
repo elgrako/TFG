@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:background="@color/colorBackground">
+
+    <EditText
+        android:id="@+id/nExpedienteRecursoExtraField"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="168dp"
+        android:backgroundTint="@color/colorPrimary"
+        android:hint="@string/nExpedienteRecursoExtra"
+        android:inputType="number"
+        android:padding="10dp"
+        android:textColor="@color/colorTextPrimary"
+        android:textColorHint="@color/colorTextSecondary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Switch
+        android:id="@+id/switchAdmitidoRecursoExtra"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="52dp"
+        android:paddingStart="8dp"
+        android:text="@string/switchAdmitidoApelacion"
+        android:textColor="@color/colorTextPrimary"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/nExpedienteRecursoExtraField"
+        tools:ignore="RtlSymmetry,UseSwitchCompatOrMaterialXml" />
+
+    <Button
+        android:id="@+id/cancelarRecursoExtraButton"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginBottom="136dp"
+        android:backgroundTint="@color/colorSecondary"
+        android:text="@string/cancelar1Btn"
+        android:textColor="@color/colorOnPrimary"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/guardarRecursoExtraButton"
+        app:layout_constraintWidth_percent="0.48" />
+
+    <Button
+        android:id="@+id/guardarRecursoExtraButton"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginBottom="136dp"
+        android:backgroundTint="@color/colorPrimary"
+        android:text="@string/guardarApelacionbtn"
+        android:textColor="@color/colorOnPrimary"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/cancelarRecursoExtraButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintWidth_percent="0.48" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
