@@ -1,57 +1,42 @@
+// com.example.tfg.local.db.AppDatabase
 package com.example.tfg.local.db;
 
 import android.content.Context;
-
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
 import com.example.tfg.local.dao.*;
-import com.example.tfg.local.entity.ApelacionGuardia;
-import com.example.tfg.local.entity.Guardia;
-import com.example.tfg.local.entity.RecursoExtraOrdinario;
-import com.example.tfg.local.entity.RecursoGuardia;
-import com.example.tfg.local.entity.Registro;
-import com.example.tfg.local.entity.SituacionGuardia;
-import com.example.tfg.local.entity.Usuario;
+import com.example.tfg.local.entity.*;
 
-// Sube version al añadir tablas o columnas
 @Database(
         entities = {
-                Registro.class,
-                Usuario.class,
-                Guardia.class,
-                SituacionGuardia.class,
-                ApelacionGuardia.class,
-                RecursoGuardia.class,
-                RecursoExtraOrdinario.class
+                Guardia.class, SituacionGuardia.class, ApelacionGuardia.class,
+                RecursoGuardia.class, RecursoExtraOrdinario.class,
+                Registro.class, Usuario.class
         },
-        version = 1,
-        exportSchema = true
+        version = 1, exportSchema = true
 )
 public abstract class AppDatabase extends RoomDatabase {
-
-    private static volatile AppDatabase INSTANCE;
-
-    public abstract RegistroDao datosDao();
-    public abstract UsuarioDao usuarioDao();
     public abstract GuardiaDao guardiaDao();
     public abstract SituacionGuardiaDao situacionGuardiaDao();
-    public abstract ApelacionGuardiaDao apelacionGuardiaDao();
+    public abstract ApelacionGuardiaDao apelacionDao();
     public abstract RecursoGuardiaDao recursoGuardiaDao();
-    public abstract RecursoExtraOrdinarioDao recursoExtraOrdinarioDao();
+    public abstract RecursoExtraDao recursoExtraOrdinarioDao();
+    public abstract RegistroDao registroDao();
+    public abstract UsuarioDao usuarioDao();
 
-    public static AppDatabase getInstance(Context context) {
-        if (INSTANCE == null) {
-            synchronized (AppDatabase.class) {
-                if (INSTANCE == null) {
-                    // Si vas a usar SQLCipher, aquí iría openHelperFactory(...)
+    private static volatile AppDatabase INSTANCE;
+    public static AppDatabase get(Context ctx){
+        if (INSTANCE == null){
+            synchronized (AppDatabase.class){
+                if (INSTANCE == null){
                     INSTANCE = Room.databaseBuilder(
-                                    context.getApplicationContext(),
+                                    ctx.getApplicationContext(),
                                     AppDatabase.class,
-                                    "tfg.db"
+                                    "tfgDatabase.db"
                             )
-                            .fallbackToDestructiveMigration() // cámbialo por Migrations cuando consolides
+                            .fallbackToDestructiveMigration() // cámbialo por Migrations cuando fijes esquema
                             .build();
                 }
             }
@@ -59,4 +44,3 @@ public abstract class AppDatabase extends RoomDatabase {
         return INSTANCE;
     }
 }
-

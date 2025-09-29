@@ -15,12 +15,14 @@ public class Guardia {
 
     public String nombreAsistido;
     public String diaActuacion;
+    public boolean porJuzgado;
+    public boolean cobrado;
 
-    public String deviceId;          // Identificador del móvil
-    public String createdAt;         // Fecha creación (ISO)
-    public String updatedAt;         // Fecha última actualización
-    public String deletedAt;         // null = vivo, fecha = borrado lógico
-    public long version;             // Número de versión local
+    public String deviceId;
+    public String createdAt;
+    public String updatedAt;
+    public String deletedAt;
+    public long version;
 
     public String remoteId;
 }

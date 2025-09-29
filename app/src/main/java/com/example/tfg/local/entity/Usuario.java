@@ -1,40 +1,33 @@
 package com.example.tfg.local.entity;
 
+import androidx.annotation.NonNull;
+import androidx.room.Entity;
+import androidx.room.Index;
+import androidx.room.PrimaryKey;
+
+@Entity(
+        tableName = "Usuario",
+        indices = {
+                @Index(value = {"nombre"}, unique = true),
+                @Index(value = {"email"}, unique = true),
+                @Index("updatedAt"),
+                @Index("deletedAt")
+        }
+)
 public class Usuario {
-    private int id;
-    private String nombre;
-    private String email;
 
-    public Usuario() {
-    }
+    @PrimaryKey
+    @NonNull
+    public String id;
 
-    public Usuario(int id, String nombre, String email) {
-        this.id = id;
-        this.nombre = nombre;
-        this.email = email;
-    }
+    public String nombre;
+    public String email;
 
-    public int getId() {
-        return id;
-    }
+    public String deviceId;
+    public String createdAt;
+    public String updatedAt;
+    public String deletedAt;
+    public long version;
 
-    public String getNombre() {
-        return nombre;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
+    public Long remoteId;
 }

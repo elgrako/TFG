@@ -1,55 +1,37 @@
 package com.example.tfg.local.entity;
 
-import java.io.Serializable;
+import static androidx.room.ForeignKey.CASCADE;
 
-import com.google.gson.annotations.SerializedName;
+import androidx.annotation.NonNull;
+import androidx.room.*;
 
-public class RecursoGuardia implements Serializable {
-    private Long id;
-    private Long guardiaId;
-    @SerializedName("nExpediente")
-    private String nExpediente;
-    private Boolean resuelto;
+@Entity(
+        tableName = "RecursoGuardia",
+        foreignKeys = @ForeignKey(
+                entity = Guardia.class,
+                parentColumns = "id",
+                childColumns = "guardiaId",
+                onDelete = CASCADE
+        ),
+        indices = {
+                @Index(value = "guardiaId", unique = true),
+                @Index("updatedAt"),
+                @Index("deletedAt")
+        }
+)
+public class RecursoGuardia {
+    @PrimaryKey
+    @NonNull
+    public String id;
+    @NonNull
+    public String guardiaId;
 
-    public RecursoGuardia() {
-    }
-
-    public RecursoGuardia(Long id, Long guardiaId, String nExpediente, Boolean resuelto) {
-        this.id = id;
-        this.guardiaId = guardiaId;
-        this.nExpediente = nExpediente;
-        this.resuelto = resuelto;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getGuardiaId() {
-        return guardiaId;
-    }
-
-    public void setGuardiaId(Long guardiaId) {
-        this.guardiaId = guardiaId;
-    }
-
-    public String getnExpediente() {
-        return nExpediente;
-    }
-
-    public void setnExpediente(String nExpediente) {
-        this.nExpediente = nExpediente;
-    }
-
-    public Boolean getResuelto() {
-        return resuelto;
-    }
-
-    public void setResuelto(Boolean resuelto) {
-        this.resuelto = resuelto;
-    }
+    public String nExpediente;
+    public boolean resuelto;
+    public String deviceId;
+    public String createdAt;
+    public String updatedAt;
+    public String deletedAt;
+    public long version;
+    public Long remoteId;
 }
