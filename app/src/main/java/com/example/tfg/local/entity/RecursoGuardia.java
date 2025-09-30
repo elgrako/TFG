@@ -28,6 +28,7 @@ public class RecursoGuardia {
 
     public String nExpediente;
     public boolean resuelto;
+
     public String deviceId;
     public String createdAt;
     public String updatedAt;

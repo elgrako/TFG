@@ -6,6 +6,7 @@ import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
 import androidx.room.Delete;
+import androidx.room.Upsert;
 
 import com.example.tfg.local.entity.SituacionGuardia;
 
@@ -31,6 +32,9 @@ public interface SituacionGuardiaDao {
 
     @Update
     void update(SituacionGuardia item);
+
+    @Upsert
+    void upsert(SituacionGuardia entity);
 
     @Delete
     void delete(SituacionGuardia item);

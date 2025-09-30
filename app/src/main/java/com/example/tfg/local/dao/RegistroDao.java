@@ -5,7 +5,9 @@ import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
+import androidx.room.Upsert;
 
+import com.example.tfg.local.entity.Guardia;
 import com.example.tfg.local.entity.Registro;
 
 import java.util.List;
@@ -27,6 +29,9 @@ public interface RegistroDao {
 
     @Update
     void update(Registro item);
+
+    @Upsert
+    void upsert(Registro entity);
 
     @Query("UPDATE Registro SET deletedAt = :ts, updatedAt = :ts, version = version + 1 WHERE id = :id")
     void softDelete(String id, String ts);

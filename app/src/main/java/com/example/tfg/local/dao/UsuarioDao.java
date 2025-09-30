@@ -5,6 +5,7 @@ import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
+import androidx.room.Upsert;
 
 import com.example.tfg.local.entity.Usuario;
 
@@ -30,6 +31,9 @@ public interface UsuarioDao {
 
     @Update
     void update(Usuario u);
+
+    @Upsert
+    void upsert(Usuario entity);
 
     @Query("UPDATE Usuario SET deletedAt = :ts, updatedAt = :ts, version = version + 1 WHERE id = :id")
     void softDelete(String id, String ts);

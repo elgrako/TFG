@@ -36,9 +36,6 @@ public interface GuardiaDao {
     @Upsert
     void upsert(Guardia entity);
 
-    @Upsert
-    void upsert(List<Guardia> entities);
-
     @Query("DELETE FROM guardia")
     void deleteAll();
 
