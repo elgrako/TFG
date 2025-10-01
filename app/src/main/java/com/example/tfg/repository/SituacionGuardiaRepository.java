@@ -1,14 +1,10 @@
 package com.example.tfg.repository;
 
 import android.content.Context;
-
 import com.example.tfg.core.DeviceId;
 import com.example.tfg.core.TimeUuid;
 import com.example.tfg.local.db.AppDatabase;
-
 import com.example.tfg.local.entity.SituacionGuardia;
-
-import java.util.List;
 
 public class SituacionGuardiaRepository {
     private final AppDatabase db;
@@ -19,29 +15,43 @@ public class SituacionGuardiaRepository {
         this.deviceId = DeviceId.get(ctx);
     }
 
-    public List<SituacionGuardia> list(){
-        return db.situacionGuardiaDao().getAll();
+    public SituacionGuardia getByGuardia(String guardiaId){
+        return db.situacionGuardiaDao().findSituacionByGuardia(guardiaId);
     }
 
-    public void create(String nTalon,String euros, boolean presentado, boolean validado, boolean pagado){
-        SituacionGuardia sg = new SituacionGuardia();
-        sg.id = TimeUuid.uuid();
-        sg.nTalon = nTalon;
-        sg.euros = euros;
-        sg.presentado = presentado;
-        sg.validado = validado;
-        sg.pagado = pagado;
+    public String upsert(String guardiaId, String comentarios, String nTalon, String euros,
+                         boolean presentado, boolean validado, boolean pagado){
+        final String now = TimeUuid.nowIso();
+        final String[] idOut = new String[1];
 
-        String now = TimeUuid.nowIso();
-        sg.deviceId = deviceId;
-        sg.createdAt = now;
-        sg.updatedAt = now;
-        sg.deletedAt = null;
-        sg.version = 1L;
-        sg.remoteId = null;
+        db.runInTransaction(() -> {
+            SituacionGuardia s = db.situacionGuardiaDao().findSituacionByGuardia(guardiaId);
+            if (s == null){
+                s = new SituacionGuardia();
+                s.id = TimeUuid.uuid();
+                s.guardiaId = guardiaId;
+                s.deviceId = deviceId;
+                s.createdAt = now;
+                s.version = 1L;
+            } else {
+                s.version += 1L;
+            }
+            s.comentarios = comentarios;
+            s.nTalon = nTalon;
+            s.euros = euros;
+            s.presentado = presentado;
+            s.validado = validado;
+            s.pagado = pagado;
+            s.updatedAt = now;
+            s.deletedAt = null;
+            s.remoteId = null;
 
-        db.situacionGuardiaDao().upsert(sg);
+            db.situacionGuardiaDao().insert(s);
+            idOut[0] = s.id;
+        });
+        return idOut[0];
     }
+
     public void softDelete(String id){
         db.situacionGuardiaDao().softDelete(id, TimeUuid.nowIso());
     }

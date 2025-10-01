@@ -6,6 +6,7 @@ import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
+import androidx.room.Upsert;
 
 import com.example.tfg.local.entity.ApelacionGuardia;
 
@@ -20,8 +21,8 @@ public interface ApelacionGuardiaDao {
     @Query("SELECT * FROM ApelacionGuardia WHERE id = :id LIMIT 1")
     ApelacionGuardia findById(String id);
 
-    @Query("SELECT * FROM ApelacionGuardia WHERE guardiaId = :guardiaId AND deletedAt IS NULL")
-    List<ApelacionGuardia> findByGuardia(String guardiaId);
+    @Query("SELECT * FROM ApelacionGuardia WHERE guardiaId = :guardiaId AND deletedAt IS NULL LIMIT 1")
+    ApelacionGuardia findByGuardia(String guardiaId);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertAll(List<ApelacionGuardia> items);
@@ -31,6 +32,9 @@ public interface ApelacionGuardiaDao {
 
     @Update
     void update(ApelacionGuardia item);
+
+    @Upsert
+    void upsert(ApelacionGuardia item);
 
     @Delete
     void delete(ApelacionGuardia item);

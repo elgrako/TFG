@@ -6,6 +6,7 @@ import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
+import androidx.room.Upsert;
 
 import com.example.tfg.local.entity.RecursoExtraOrdinario;
 
@@ -21,7 +22,7 @@ public interface RecursoExtraDao {
     RecursoExtraOrdinario getById(String id);
 
     @Query("SELECT * FROM RecursoExtraOrdinario WHERE guardiaId = :guardiaId AND deletedAt IS NULL")
-    List<RecursoExtraOrdinario> findByGuardia(String guardiaId);
+    RecursoExtraOrdinario findByGuardia(String guardiaId);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(RecursoExtraOrdinario item);
@@ -32,6 +33,8 @@ public interface RecursoExtraDao {
     @Update
     void update(RecursoExtraOrdinario item);
 
+    @Upsert
+    void upsert(RecursoExtraOrdinario item);
     @Delete
     void delete(RecursoExtraOrdinario item);
 

@@ -2,7 +2,6 @@ package com.example.tfg.repository;
 
 import android.content.Context;
 
-import com.example.tfg.R;
 import com.example.tfg.core.DeviceId;
 import com.example.tfg.core.TimeUuid;
 import com.example.tfg.local.db.AppDatabase;
@@ -11,7 +10,6 @@ import com.example.tfg.local.entity.Registro;
 import java.util.List;
 
 public class RegistroRepository {
-
     private final AppDatabase db;
     private final String deviceId;
 
@@ -24,25 +22,51 @@ public class RegistroRepository {
         return db.registroDao().getAll();
     }
 
-    public void create(String nombre, String dni, String nExpediente, Double euros, String email, String telefono){
-        Registro r = new Registro();
-        r.id = TimeUuid.uuid();
-        r.nombre = nombre;
-        r.dni = dni;
-        r.nExpediente = nExpediente;
-        r.euros = euros;
-        r.email = email;
-        r.telefono = telefono;
+    public Registro getById(String id){
+        return db.registroDao().getById(id);
+    }
 
-        String now = TimeUuid.nowIso();
-        r.deviceId = deviceId;
-        r.createdAt = now;
-        r.updatedAt = now;
-        r.deletedAt = null;
-        r.version = 1L;
-        r.remoteId = null;
+    public Registro getByNombre(String nombre){
+        return db.registroDao().getByNombre(nombre);
+    }
 
-        db.registroDao().upsert(r);
+    public String upsertByNombre(String nombre, String dni, String nExpediente, Double euros,
+                                 String email, String telefono,
+                                 Boolean presentado, Boolean validado, Boolean pagado,
+                                 Integer nTalon, String comentarios){
+        final String now = TimeUuid.nowIso();
+        final String[] idOut = new String[1];
+
+        db.runInTransaction(() -> {
+            Registro r = db.registroDao().getByNombre(nombre);
+            if (r == null){
+                r = new Registro();
+                r.id = TimeUuid.uuid();
+                r.nombre = nombre;
+                r.createdAt = now;
+                r.version = 1L;
+                r.deviceId = deviceId;
+            } else {
+                r.version += 1L;
+            }
+            r.dni = dni;
+            r.nExpediente = nExpediente;
+            r.euros = euros;
+            r.email = email;
+            r.telefono = telefono;
+            r.presentado = presentado;
+            r.validado = validado;
+            r.pagado = pagado;
+            r.nTalon = nTalon;
+            r.comentarios = comentarios;
+            r.updatedAt = now;
+            r.deletedAt = null;
+            r.remoteId = null;
+
+            db.registroDao().insert(r);
+            idOut[0] = r.id;
+        });
+        return idOut[0];
     }
 
     public void softDelete(String id){

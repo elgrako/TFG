@@ -1,4 +1,3 @@
-
 package com.example.tfg.repository;
 
 import android.content.Context;
@@ -22,7 +21,11 @@ public class GuardiaRepository {
         return db.guardiaDao().getAll();
     }
 
-    public void create(String nombreAsistido, String diaIso, boolean porJuzgado, boolean cobrado){
+    public Guardia getById(String id){
+        return db.guardiaDao().findById(id);
+    }
+
+    public String create(String nombreAsistido, String diaIso, boolean porJuzgado, boolean cobrado){
         Guardia g = new Guardia();
         g.id = TimeUuid.uuid();
         g.nombreAsistido = nombreAsistido;
@@ -39,9 +42,20 @@ public class GuardiaRepository {
         g.remoteId = null;
 
         db.guardiaDao().upsert(g);
+        return g.id;
+    }
+
+    public void update(Guardia g){
+        g.updatedAt = TimeUuid.nowIso();
+        g.version += 1L;
+        db.guardiaDao().update(g);
     }
 
     public void softDelete(String id){
         db.guardiaDao().softDelete(id, TimeUuid.nowIso());
+    }
+
+    public void hardDeleteAll(){
+        db.guardiaDao().deleteAll();
     }
 }

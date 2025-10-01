@@ -1,14 +1,10 @@
 package com.example.tfg.repository;
 
 import android.content.Context;
-
 import com.example.tfg.core.DeviceId;
 import com.example.tfg.core.TimeUuid;
 import com.example.tfg.local.db.AppDatabase;
 import com.example.tfg.local.entity.RecursoExtraOrdinario;
-
-
-import java.util.List;
 
 public class RecursoExtraRepository {
     private final AppDatabase db;
@@ -19,23 +15,36 @@ public class RecursoExtraRepository {
         this.deviceId = DeviceId.get(ctx);
     }
 
-    public List<RecursoExtraOrdinario> list(){
-        return db.recursoExtraOrdinarioDao().getAll();
+    public RecursoExtraOrdinario getByGuardia(String guardiaId){
+        return db.recursoExtraOrdinarioDao().findByGuardia(guardiaId);
     }
 
-    public void create(Integer nExpediente, boolean admitido){
-        RecursoExtraOrdinario reo = new RecursoExtraOrdinario();
-        reo.id = TimeUuid.uuid();
-        reo.nExpediente = nExpediente;
-        reo.admitido = admitido;
+    public String upsert(String guardiaId, Integer nExpediente, Boolean admitido){
+        final String now = TimeUuid.nowIso();
+        final String[] idOut = new String[1];
 
-        String now = TimeUuid.nowIso();
-        reo.deviceId = deviceId;
-        reo.createdAt = now;
-        reo.updatedAt = now;
-        reo.deletedAt = null;
-        reo.version = 1L;
-        reo.remoteId = null;
+        db.runInTransaction(() -> {
+            RecursoExtraOrdinario e = db.recursoExtraOrdinarioDao().findByGuardia(guardiaId);
+            if (e == null){
+                e = new RecursoExtraOrdinario();
+                e.id = TimeUuid.uuid();
+                e.guardiaId = guardiaId;
+                e.deviceId = deviceId;
+                e.createdAt = now;
+                e.version = 1L;
+            } else {
+                e.version += 1L;
+            }
+            e.nExpediente = nExpediente;
+            e.admitido = admitido;
+            e.updatedAt = now;
+            e.deletedAt = null;
+            e.remoteId = null;
+
+            db.recursoExtraOrdinarioDao().upsert(e);
+            idOut[0] = e.id;
+        });
+        return idOut[0];
     }
 
     public void softDelete(String id){

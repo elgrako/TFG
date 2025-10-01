@@ -1,44 +1,53 @@
 package com.example.tfg.repository;
 
 import android.content.Context;
-
 import com.example.tfg.core.DeviceId;
 import com.example.tfg.core.TimeUuid;
 import com.example.tfg.local.db.AppDatabase;
 import com.example.tfg.local.entity.RecursoGuardia;
-import com.example.tfg.local.entity.Registro;
-
-import java.util.List;
 
 public class RecursoGuardiaRepository {
     private final AppDatabase db;
     private final String deviceId;
 
-    public RecursoGuardiaRepository(Context ctx) {
+    public RecursoGuardiaRepository(Context ctx){
         this.db = AppDatabase.get(ctx);
         this.deviceId = DeviceId.get(ctx);
     }
 
-    public List<Registro> list() {
-        return db.registroDao().getAll();
+    public RecursoGuardia getByGuardia(String guardiaId){
+        return db.recursoGuardiaDao().findByGuardia(guardiaId);
     }
 
-    public void create(String nExpediente, boolean resuelto) {
-        RecursoGuardia rg = new RecursoGuardia();
-        rg.id = TimeUuid.uuid();
-        rg.nExpediente = nExpediente;
-        rg.resuelto = resuelto;
+    public String upsert(String guardiaId, String nExpediente, boolean resuelto){
+        final String now = TimeUuid.nowIso();
+        final String[] idOut = new String[1];
 
-        String now = TimeUuid.nowIso();
-        rg.deviceId = deviceId;
-        rg.createdAt = now;
-        rg.updatedAt = now;
-        rg.deletedAt = null;
-        rg.version = 1L;
-        rg.remoteId = null;
+        db.runInTransaction(() -> {
+            RecursoGuardia r = db.recursoGuardiaDao().findByGuardia(guardiaId);
+            if (r == null){
+                r = new RecursoGuardia();
+                r.id = TimeUuid.uuid();
+                r.guardiaId = guardiaId;
+                r.deviceId = deviceId;
+                r.createdAt = now;
+                r.version = 1L;
+            } else {
+                r.version += 1L;
+            }
+            r.nExpediente = nExpediente;
+            r.resuelto = resuelto;
+            r.updatedAt = now;
+            r.deletedAt = null;
+            r.remoteId = null;
+
+            db.recursoGuardiaDao().upsert(r);
+            idOut[0] = r.id;
+        });
+        return idOut[0];
     }
 
-    public void softDelete(String id) {
+    public void softDelete(String id){
         db.recursoGuardiaDao().softDelete(id, TimeUuid.nowIso());
     }
 }

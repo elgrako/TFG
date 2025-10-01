@@ -32,6 +32,7 @@ public class SituacionGuardia {
 
     public String nTalon;
     public String euros;
+    public String comentarios;
 
     public boolean presentado;
     public boolean validado;
